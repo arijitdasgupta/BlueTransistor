@@ -9,7 +9,6 @@
   "author": "Arijit Dasgupta",
   "license": "MIT",
   "dependencies": {
-    "babel": "^6.5.2",
     "lodash": "^4.11.1"
   }
 }
