@@ -52,3 +52,5 @@ const writeToBulb = (reg, green, blue, alpha)=>{
 const turnBulb = (onOff)=>{
 
 };
+
+export {writeToBulb}
