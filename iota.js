@@ -1,5 +1,5 @@
-const spawn = require('child_process').spawn;
-const _     = require('lodash');
+var spawn = require('child_process').spawn;
+var _     = require('lodash');
 
 var gatttool = spawn('gatttool', [
   '-i',
@@ -13,44 +13,47 @@ var gattoolCommandsStream = gatttool.stdin;
 gattoolCommandsStream.st.write('connect');
 gattoolCommandsStream.end();
 
-const gattWriteString = (value)=>{
-  return `char-write-cmd 0x002b ${value}`
+var gattWriteString = function(value){
+  return 'char-write-cmd 0x002b ' + value;
 };
 
-const calculateChecksum = (hexString, salt)=>{
-  const byteArray = _.map(_.chunk(hexString, 2), (i1, i2)=>{
+var calculateChecksum = function(hexString, salt){
+  var byteArray = _.map(_.chunk(hexString, 2), (i1, i2)=>{
     return parseInt(i1 + i2, 16);
   });
-  const sum = _.reduce(byteArray, (a, b)=>{return a + b;}, 0);
-  const saltedSum = sum + salt;
-  const checksum = (saltedSum & 0xFF).toString(16);
+  var sum = _.reduce(byteArray, (a, b)=>{return a + b;}, 0);
+  var saltedSum = sum + salt;
+  var checksum = _.padLeft((saltedSum & 0xFF).toString(16), 2, '0');
   return checksum;
 }
 
-const calculateColorValue = (red, green, blue, alpha)=>{
+var calculateColorValue = function(red, green, blue, alpha){
   red = _.padLeft(red.toString(16), 2, '0');
   green = _.padLeft(green.toString(16), 2, '0');
   blue = _.padLeft(blue.toString(16), 2, '0');
   alpha = _.padLeft(alpha.toString(16), 2, '0');
-  const hexString = `0f0d0300${red}${green}${blue}${alpha}000000000000`;
-  const checksum = calculateChecksum(hexString);
+  var hexString = '0f0d0300' + red + green + blue + alpha + '000000000000';
+  var checksum = calculateChecksum(hexString);
   // Get the main string
   // Calculate checksum
-  return `${hexString}${checksum}ffff`;
+  return hexString + checksum + 'ffff';
 }
 
-const calculateToggleValue = (red, green, blue, alpha)=>{
+var calculateToggleValue = function(red, green, blue, alpha){
   return calculateValue;
 };
 
-const writeToBulb = (reg, green, blue, alpha)=>{
-  const colorValue = calculateColorValue(red, greed, blue, alpha);
-  const writeString = gattWriteString(colorValue);
+var writeToBulb = function(reg, green, blue, alpha){
+  var colorValue = calculateColorValue(red, greed, blue, alpha);
+  var writeString = gattWriteString(colorValue);
+  console.log('Writing...', writeString);
   gatttool.stdin.write(writeString);
 };
 
-const turnBulb = (onOff)=>{
+var turnBulb = function(onOff){
 
 };
 
-export {writeToBulb}
+module.exports = {
+  writeToBulb: writeToBulb
+};
