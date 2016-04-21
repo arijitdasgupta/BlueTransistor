@@ -16,6 +16,20 @@ npm install
 node app.js
 ```
 
+`config.js` has the MAC id array of all the bulbs that you want to connect.
+
+The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
+```
+{
+  bulb: <BULB NUMBER>,
+  red: <RED>,
+  green: <GREEN>,
+  blue: <BLUE>,
+  alpha: <ALPHA>
+}
+```
+
+
 TODO:
  - Write express JS HTTP adapter
  - Try out with multiple bulbs
