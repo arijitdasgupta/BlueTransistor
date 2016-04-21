@@ -45,7 +45,7 @@ var initiateApp = ()=>{
   });
 
   webapp.listen(7000, ()=>{
-    console.log('Wedapp listening on 7000');
+    console.log('Webapp listening on 7000');
   });
 }
 

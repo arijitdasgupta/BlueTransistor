@@ -31,12 +31,11 @@ The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
     "off"
   ]
 }
+```
 
 "off" will turn the corresponding bulb off
-```
 
 
 TODO:
- - Write express JS HTTP adapter
  - Try out with multiple bulbs
  - Write bot code with web-hooks
