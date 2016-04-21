@@ -21,7 +21,7 @@ node app.js
 The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
 ```
 {
-  bulb: <BULB NUMBER>,
+  bulb: <BULB NUMBER (1,2,3,...)>,
   red: <RED>,
   green: <GREEN>,
   blue: <BLUE>,
