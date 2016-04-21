@@ -21,12 +21,18 @@ node app.js
 The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
 ```
 {
-  bulb: <BULB NUMBER>,
-  red: <RED>,
-  green: <GREEN>,
-  blue: <BLUE>,
-  alpha: <ALPHA>
+  "bulbs": [
+    {
+      red: <RED for Bulb 1>,
+      green: <GREEN for Bulb 1>,
+      blue: <BLUE for Bulb 1>,
+      alpha: <ALPHA for Bulb 1>
+    },
+    "off"
+  ]
 }
+
+"off" will turn the corresponding bulb off
 ```
 
 
