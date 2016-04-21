@@ -10,11 +10,11 @@ var calculateChecksum = function(hexString, salt){
   return checksum;
 }
 
-var calculateColorValue = function(red, green, blue, alpha){
-  red = _.padStart(red.toString(16), 2, '0');
-  green = _.padStart(green.toString(16), 2, '0');
-  blue = _.padStart(blue.toString(16), 2, '0');
-  alpha = _.padStart(alpha.toString(16), 2, '0');
+var calculateColorValue = function(color){
+  var red = _.padStart(color.red.toString(16), 2, '0');
+  var green = _.padStart(color.green.toString(16), 2, '0');
+  var blue = _.padStart(color.blue.toString(16), 2, '0');
+  var alpha = _.padStart(color.alpha.toString(16), 2, '0');
   var hexString = '0f0d0300' + red + green + blue + alpha + '000000000000';
   var checksum = calculateChecksum(hexString, 0xE5);
   // Get the main string
@@ -26,10 +26,34 @@ var calculateToggleValue = function(red, green, blue, alpha){
   return calculateValue;
 };
 
-var calculateOnOff = function(onOff){
+// 0f0a0d00
+// +
+// NEXT COLOR HEX
+// (ffffff) (RRGGBB 3 byte)
+// +
+// (c8050000|00050000) (4 bytes)
+// +
+// CHECKSUM (1 byte)
+// +
+// ffff
 
+var calculateOnOff = function(on){
+  var hexString = '0f0a0d00';
+  if(!on){
+    hexString += '00000000050000';
+  }
+  else {
+    var red = _.padStart(on.red.toString(16), 2, '0');
+    var green = _.padStart(on.green.toString(16), 2, '0');
+    var blue = _.padStart(on.blue.toString(16), 2, '0');
+    var alpha = _.padStart(on.alpha.toString(16), 2, '0');
+    hexString += red + green + blue + alpha + '050000';
+  }
+  var checksum = calculateChecksum(hexString, 0xE8);
+  return hexString + checksum + 'ffff\n';
 };
 
 module.exports = {
-  colorValue: calculateColorValue
+  colorValue: calculateColorValue,
+  toggle: calculateOnOff
 };

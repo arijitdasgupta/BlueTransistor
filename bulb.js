@@ -14,20 +14,20 @@ var startDaemon = function(macId){
   // Primary connection
   gatttool.stdin.setEncoding('utf-8');
   gatttool.stdin.write('connect\n');
-  // TODO: Make error checking
+  // TODO: Add error checking
   //
-  // gatttool.stdout.pipe(process.stdout);
+  gatttool.stdout.pipe(process.stdout);
   return gatttool;
 };
 
-var writeToBulb = function(colorValue, gatttool){
+var writeToBulb = (colorValue, gatttool)=>{
   var writeString = gattWriteString(colorValue);
   console.log('Writing...', writeString);
   gatttool.stdin.write(writeString);
   // TODO: Return success-failure stream
 };
 
-var killDaemon = function(gatttool){
+var killDaemon = (gatttool)=>{
   gatttool.stdin.write('disconnect\n');
   gatttool.stdin.write('exit\n');
   gatttool.stdin.end();
@@ -38,10 +38,10 @@ var init = function(macId){
   var gatttool = startDaemon(macId);
 
   return {
-    writeToBulb: function(colorValue){
+    writeToBulb: (colorValue)=>{
       writeToBulb(colorValue, gatttool);
     },
-    killDaemon: function(){
+    killDaemon: ()=>{
       killDaemon(gatttool);
     }
   }

@@ -6,6 +6,14 @@ var iota =       require('./iota.js');
 var Bulb =       require('./bulb.js');
 var config =     require('./config.js');
 
+// Will me assigned over the incoming bulb
+const defaultColorValue = {
+  red: 255,
+  green: 255,
+  blue: 255,
+  alpha: 200
+};
+
 // The stateful components
 var webapp, bulbs;
 
@@ -23,21 +31,15 @@ var initiateApp = ()=>{
     // Getting the data
     console.log(req.body);
     var newData = req.body;
-    var data = _.assign({
-      bulbs: 1,
-      red: 255,
-      green: 255,
-      blue: 255,
-      alpha: 200
-    }, newData);
-    // Putting the data in
-    var theBulb = bulbs[data.bulb - 1];
-    theBulb.writeToBulb(iota.colorValue(
-      data.red,
-      data.green,
-      data.blue,
-      data.alpha
-    ));
+    _.forEach(newData.bulbs, (bulbData, index)=>{
+      if(!_.isString(bulbData)){
+        var colorData = _.assign(defaultColorValue, bulbData);
+        bulbs[index].writeToBulb(iota.colorValue(colorData));
+      }
+      else if(bulbData === "off"){
+        bulbs[index].writeToBulb(iota.toggle(false));
+      }
+    });
     res.write('DONE');
     res.end();
   });
