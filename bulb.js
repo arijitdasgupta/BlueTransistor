@@ -16,7 +16,7 @@ var startDaemon = function(macId){
   gatttool.stdin.write('connect\n');
   // TODO: Make error checking
   //
-  gatttool.stdout.pipe(process.stdout);
+  // gatttool.stdout.pipe(process.stdout);
   return gatttool;
 };
 
