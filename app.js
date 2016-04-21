@@ -6,7 +6,7 @@ var iota =       require('./iota.js');
 var Bulb =       require('./bulb.js');
 var config =     require('./config.js');
 
-// Will me assigned over the incoming bulb
+// Will me assigned over the incoming bulb data
 const defaultColorValue = {
   red: 255,
   green: 255,
@@ -32,10 +32,12 @@ var initiateApp = ()=>{
     console.log(req.body);
     var newData = req.body;
     _.forEach(newData.bulbs, (bulbData, index)=>{
-      if(!_.isString(bulbData)){
+      // If there is a legitimate object
+      if(!_.isString(bulbData) && _.isObject(bulbData)){
         var colorData = _.assign(defaultColorValue, bulbData);
         bulbs[index].writeToBulb(iota.colorValue(colorData));
       }
+      // Of just turn if off
       else if(bulbData === "off"){
         bulbs[index].writeToBulb(iota.toggle(false));
       }

@@ -33,7 +33,7 @@ The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
 }
 ```
 
-"off" will turn the corresponding bulb off
+"off" will turn the corresponding bulb off. if u want to keep it unchanged, just put some other string, like "unchanged".
 
 
 TODO:

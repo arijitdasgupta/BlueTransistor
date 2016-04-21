@@ -1,5 +1,7 @@
 var spawn = require('child_process').spawn;
 
+// TODO: Get status reading
+
 var gattWriteString = function(value){
   return 'char-write-cmd 0x002b ' + value + '\n';
 };
