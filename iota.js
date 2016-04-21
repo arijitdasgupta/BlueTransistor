@@ -1,21 +1,4 @@
-var spawn = require('child_process').spawn;
 var _     = require('lodash');
-
-//var gatttool = spawn('gatttool', [
-  //'-i',
-  //'-b',
-  //'F4:B8:5E:E3:D9:E9'
-//]);
-
-//var gattoolCommandsStream = gatttool.stdin;
-
-// Primary connection
-//gatttool.stdin.write('connect\n');
-//gatttool.stdin.end();
-
-var gattWriteString = function(value){
-  return 'char-write-cmd 0x002b ' + value;
-};
 
 var calculateChecksum = function(hexString, salt){
   var byteArray = _.map(_.chunk(hexString, 2), (i)=>{
@@ -43,21 +26,10 @@ var calculateToggleValue = function(red, green, blue, alpha){
   return calculateValue;
 };
 
-var writeToBulb = function(red, green, blue, alpha){
-  var colorValue = calculateColorValue(red, green, blue, alpha);
-  var writeString = gattWriteString(colorValue);
-  console.log('Writing...', writeString);
-  //gatttool.stdin.write(writeString);
-    //gatttool.stdin.end();
-    spawn('./write_data.sh',[
-	'F4:B8:5E:E3:D9:E9',
-	colorValue]);
-};
-
-var turnBulb = function(onOff){
+var calculateOnOff = function(onOff){
 
 };
 
 module.exports = {
-  writeToBulb: writeToBulb
+  colorValue: calculateColorValue
 };
