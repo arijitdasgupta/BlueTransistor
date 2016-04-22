@@ -43,19 +43,10 @@ const init = function(macId){
     gatttool.kill('SIGTERM');
   };
 
-  // Making sure things get properly terminated when disconnected
-  var killer = ()=> {
-    console.log('Terminating daemon for ', stateInfo.macId);
-    killDaemon();
-    process.exit(0);
-  };
-
-  process.on('SIGINT', killer);
-  process.on('SIGTERM', killer);
-
   connect();
 
   return {
+    stateInfo: stateInfo,
     writeToBulb: writeToBulb,
     killDaemon: killDaemon
   };

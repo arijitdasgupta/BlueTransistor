@@ -51,9 +51,24 @@ var initiateApp = ()=>{
   });
 }
 
+var initiateEventHandlers = ()=>{
+  // Making sure things get properly terminated when disconnected
+  var killer = ()=> {
+    _.forEach(bulbs, (bulb)=>{
+      console.log('Terminating daemon for', bulb.stateInfo.macId);
+      bulb.killDaemon();
+    });
+    process.exit(0);
+  };
+
+  process.on('SIGINT', killer);
+  process.on('SIGTERM', killer);
+}
+
 // Main entry point
 var init = ()=>{
   initiateBulbs();
+  initiateEventHandlers();
   initiateApp();
 }
 
