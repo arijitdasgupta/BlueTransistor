@@ -38,6 +38,7 @@ The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
 
 
 TODO:
- - Make the system promise based
+ - Make sure status reporting is alright, with promises
+ - Make sure the system reports when things fail
  - Try out with multiple bulbs
  - Write bot code with web-hooks
