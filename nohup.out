@@ -1,115 +1,0 @@
-Webapp listening on 7000
-[F4:B8:5E:E3:D9:E9][LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-Attempting to connect to F4:B8:5E:E3:D9:E9
-[F4:B8:5E:E3:D9:E9][LE]> 
-[KConnection successful
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Loading last command for  F4:B8:5E:E3:D9:E9
-Last command for F4:B8:5E:E3:D9:E9 is 0f0a0d000000000005000013ffff
-Writing... char-write-cmd 0x002b 0f0a0d000000000005000013ffff
-
-char-write-cmd 0x002b 0f0a0d0000000000050000 13ffff
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-[KNotification handle = 0x002e value: 0f 04 0d 00 00 0e ff ff 
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-{ bulbs: [ { red: 255, blue: 255, green: 0, alpha: 200 } ] }
-Writing... char-write-cmd 0x002b 0f0d0300ff00ffc8000000000000caffff
-
-
-char-write-cmd 0x002b 0f0d0300ff00ffc8000000 000000caffff
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> [K[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-[KNotification handle = 0x002e value: 0f 04 03 00 00 04 ff ff 
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-c
-onnec
-t
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-c
-onnect
-
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-{ bulbs: [ 'off' ] }
-Writing... char-write-cmd 0x002b 0f0a0d000000000005000013ffff
-
-
-char-write-cmd 0x002b 0f0a0d000000000005000
-0 
-1
-3f
-fff
-
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-[K[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-[KNotification handle = 0x002e value: 0f 04 0d 00 00 0e ff ff 
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-[10P[F4:B8:5E:E3:D9:E9][LE]> connect
-Attempting to connect to F4:B8:5E:E3:D9:E9
-[F4:B8:5E:E3:D9:E9][LE]> 
-[KConnection successful
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-[10P[F4:B8:5E:E3:D9:E9][LE]> connect
-Attempting to connect to F4:B8:5E:E3:D9:E9
-[F4:B8:5E:E3:D9:E9][LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[F4:B8:5E:E3:D9:E9][LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[F4:B8:5E:E3:D9:E9][LE]> 
-[KConnection successful
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Attempting to connect to F4:B8:5E:E3:D9:E9
-connect
-[0;94m[F4:B8:5E:E3:D9:E9][0m[LE]> 
-Terminating daemon for F4:B8:5E:E3:D9:E9
