@@ -1,5 +1,7 @@
 var spawn = require('child_process').spawn;
 var _ = require('lodash');
+var fs = require('fs');
+var iota = require('./iota.js');
 var Q = require('q');
 
 const gattWriteString = function(value){
@@ -15,11 +17,11 @@ const init = function(macId){
   // Status stuff
   var stateInfo = {
     macId: macId,
-    online: false
+    online: false,
+    lastCommand: 'nonzero'
   };
 
   var connectorInterval;
-  var lastCommand;
 
   // Starting the process
   var gatttool = spawn('gatttool', [
@@ -27,8 +29,32 @@ const init = function(macId){
     '-b',
     macId
   ]);
-
   gatttool.stdin.setEncoding('utf-8');
+
+  // Getting the last command from a non-volatile storage, FS
+  var commandFilename = stateInfo.macId + '.command';
+
+  var createCache = ()=>{
+    try{
+      fs.statSync(commandFilename);
+      console.log('Loading last command for ', stateInfo.macId);
+      var readString = _.trim(fs.readFileSync(commandFilename).toString('utf-8'));
+      stateInfo.lastCommand = (readString === '')?null:readString;
+      if(stateInfo.lastCommand){
+        console.log('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
+        applyLastCommand();
+      }
+    }
+    catch(err){ // If it doesn't exist
+      console.log(commandFilename, 'doesnt exist. Creating...', err);
+      stateInfo.lastCommand = null;
+      fs.writeFile(commandFilename, '', (err)=>{
+        if(err) {
+          console.log("Failed to create last command file");
+        }
+      }); //Keeping that safe
+    }
+  }
 
   // Managing the incoming streams
   var incomingString = '';
@@ -59,7 +85,12 @@ const init = function(macId){
   // Clear the connect thingie
   var connectionSuccess = ()=>{
     stateInfo.online = true;
-    applyLastCommand();
+    if(stateInfo.lastCommand === 'nonzero'){
+      createCache();
+    }
+    else{
+      applyLastCommand();
+    }
   }
 
   // Restart the connection trials
@@ -67,15 +98,12 @@ const init = function(macId){
     stateInfo.online = false;
   }
 
-  // Apply last known command unpon reconnection...
+  // Apply last known command upon in case it was turned off...
+  // Assuming this is the only way to turn the bulb off...
+  // TODO: May this is not the best of ideas...
   var applyLastCommand = ()=>{
-    if(lastCommand){
-      writeToBulb(lastCommand);
-    }
-    else{
-      // TODO: Make sure you store the last command somewhere non-volatile
-      writeToBulb('0f0a0d000000000005000013ffff');
-      // It turns if off if there isn't any last command
+    if(iota.isOffCommand(stateInfo.lastCommand)){
+      writeToBulb(stateInfo.lastCommand);
     }
   }
 
@@ -94,9 +122,10 @@ const init = function(macId){
   }
 
   var writeToBulb = (colorValue)=>{
-    lastCommand = colorValue;
+    stateInfo.lastCommand = colorValue;
     var writeString = gattWriteString(colorValue);
     write(writeString);
+    fs.writeFile(commandFilename, colorValue); //Keeping that safe
   };
 
   var killDaemon = ()=>{

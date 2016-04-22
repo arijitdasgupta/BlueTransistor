@@ -53,7 +53,12 @@ var calculateOnOff = function(on){
   return hexString + checksum + 'ffff\n';
 };
 
+var isOffCommand = function(command){
+  return command === '0f0a0d000000000005000013ffff';
+};
+
 module.exports = {
+  isOffCommand: isOffCommand,
   colorValue: calculateColorValue,
   toggle: calculateOnOff
 };
