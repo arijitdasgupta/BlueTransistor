@@ -112,8 +112,10 @@ const init = function(macId){
   var applyLastCommand = ()=>{
     // If only it's a turn-off command...
     logger.writeLog('Applying last command', stateInfo.lastCommand);
-    if(isOffCommand(stateInfo.lastCommand)){
-      writeToBulb(stateInfo.lastCommand);
+    // TODO: Not sure why I did this...
+    var lastCmd = _.trim(stateInfo.lastCommand);
+    if(isOffCommand(lastCmd)){
+      writeToBulb(lastCmd);
     }
   }
 
