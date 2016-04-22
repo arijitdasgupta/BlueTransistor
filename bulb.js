@@ -67,9 +67,16 @@ const init = function(macId){
     stateInfo.online = false;
   }
 
-  // Apply last known command unpon reconnection... 
+  // Apply last known command unpon reconnection...
   var applyLastCommand = ()=>{
-    writeToBulb(lastCommand);
+    if(lastCommand){
+      writeToBulb(lastCommand);
+    }
+    else{
+      // TODO: Make sure you store the last command somewhere non-volatile
+      writeToBulb('0f0a0d000000000005000013ffff');
+      // It turns if off if there isn't any last command
+    }
   }
 
   // Primary connection
