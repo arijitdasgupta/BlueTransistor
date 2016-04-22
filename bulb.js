@@ -1,7 +1,8 @@
-var spawn = require('child_process').spawn;
-var _ = require('lodash');
-var fs = require('fs');
-var Q = require('q');
+var spawn =  require('child_process').spawn;
+var _ =      require('lodash');
+var fs =     require('fs');
+var Q =      require('q');
+var logger = require('./logger.js');
 
 var isOffCommand = require('./iota.js').isOffCommand;
 
@@ -39,22 +40,22 @@ const init = function(macId){
   var createCache = ()=>{
     try{
       fs.statSync(commandFilename);
-      console.log('Loading last command for ', stateInfo.macId);
+      logger.writeLog('Loading last command for ', stateInfo.macId);
       var readString = _.trim(fs.readFileSync(commandFilename).toString('utf-8'));
       stateInfo.lastCommand = (readString === '')?null:readString;
       if(stateInfo.lastCommand){
-        console.log('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
+        logger.writeLog('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
         applyLastCommand();
       }
     }
     catch(err){ // If it doesn't exist
-      console.log(commandFilename, 'doesnt exist. Creating...', err);
+      logger.writeLog(commandFilename, 'doesnt exist. Creating...', err);
       stateInfo.lastCommand = null;
       fs.writeFile(commandFilename, '', (err)=>{
         // This could be a performance bottlneck, not sure what to do.
         // Best would be to use someting like Redis or something
         if(err) {
-          console.log("Failed to write last command...");
+          logger.writeLog("Failed to write last command...");
         }
       }); //Keeping that safe
     }
@@ -64,7 +65,7 @@ const init = function(macId){
   var incomingString = '';
   var incomingHandler = (chunk)=>{
     var theString = chunk.toString('utf-8');
-    console.log(theString);
+    // logger.writeLog(theString);
     incomingString += theString;
     if (incomingString.indexOf(connectSuccess) !== -1){
       connectionSuccess();
@@ -89,6 +90,7 @@ const init = function(macId){
 
   // Clear the connect thingie
   var connectionSuccess = ()=>{
+    logger.writeLog(stateInfo.macId, 'is back online');
     stateInfo.online = true;
     if(stateInfo.lastCommand === 'nonzero'){
       createCache();
@@ -100,6 +102,7 @@ const init = function(macId){
 
   // Restart the connection trials
   var connectionFailed = ()=>{
+    logger.writeLog(stateInfo.macId, 'just went offline');
     stateInfo.online = false;
   }
 
@@ -108,6 +111,7 @@ const init = function(macId){
   // TODO: Maybe this is not the best of ideas...
   var applyLastCommand = ()=>{
     // If only it's a turn-off command...
+    logger.writeLog('Applying last command', stateInfo.lastCommand);
     if(isOffCommand(stateInfo.lastCommand)){
       writeToBulb(stateInfo.lastCommand);
     }
@@ -117,13 +121,18 @@ const init = function(macId){
   // This is dangerous, but with great power comes great responsibility...
   var connect = function(){
     connectorInterval = setInterval(()=>{
-      console.log('Attempting to connect to', stateInfo.macId);
+      if(stateInfo.online){
+        logger.writeLog('Polling to ', stateInfo.macId);
+      }
+      else{
+        logger.writeLog('Attempting to connect to', stateInfo.macId);
+      }
       gatttool.stdin.write('connect\n');
     }, 2000);
   };
 
   var write = (writeString)=>{
-    console.log('Writing...', writeString);
+    logger.writeLog('Writing...', writeString);
     gatttool.stdin.write(writeString);
   }
 

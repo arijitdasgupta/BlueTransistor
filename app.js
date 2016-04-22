@@ -5,6 +5,7 @@ var bodyParser = require('body-parser')
 var iota =       require('./iota.js');
 var Bulb =       require('./bulb.js');
 var config =     require('./config.js');
+var logger =     require('./logger.js');
 
 // Will me assigned over the incoming bulb data
 const defaultColorValue = {
@@ -29,7 +30,7 @@ var initiateApp = ()=>{
 
   webapp.post('/', function(req, res){
     // Getting the data
-    console.log(req.body);
+    logger.writeLog(req.body);
     var newData = req.body;
     _.forEach(newData.bulbs, (bulbData, index)=>{
       // If there is a legitimate object
@@ -47,7 +48,7 @@ var initiateApp = ()=>{
   });
 
   webapp.listen(7000, ()=>{
-    console.log('Webapp listening on 7000');
+    logger.writeLog('Webapp listening on 7000');
   });
 }
 
@@ -55,7 +56,7 @@ var initiateEventHandlers = ()=>{
   // Making sure things get properly terminated when disconnected
   var killer = ()=> {
     _.forEach(bulbs, (bulb)=>{
-      console.log('Terminating daemon for', bulb.stateInfo.macId);
+      logger.writeLog('Terminating daemon for', bulb.stateInfo.macId);
       bulb.killDaemon();
     });
     process.exit(0);
