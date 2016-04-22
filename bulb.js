@@ -1,8 +1,9 @@
 var spawn = require('child_process').spawn;
 var _ = require('lodash');
 var fs = require('fs');
-var iota = require('./iota.js');
 var Q = require('q');
+
+var isOffCommand = require('./iota.js').isOffCommand;
 
 const gattWriteString = function(value){
   return 'char-write-cmd 0x002b ' + value + '\n';
@@ -18,7 +19,7 @@ const init = function(macId){
   var stateInfo = {
     macId: macId,
     online: false,
-    lastCommand: 'nonzero'
+    lastCommand: 'nonzero' //Initial flag, might not be a good idea. Bad design
   };
 
   var connectorInterval;
@@ -31,9 +32,10 @@ const init = function(macId){
   ]);
   gatttool.stdin.setEncoding('utf-8');
 
-  // Getting the last command from a non-volatile storage, FS
+  // last command filename... yaay!
   var commandFilename = stateInfo.macId + '.command';
 
+  // Creates or read the last command file...
   var createCache = ()=>{
     try{
       fs.statSync(commandFilename);
@@ -49,8 +51,10 @@ const init = function(macId){
       console.log(commandFilename, 'doesnt exist. Creating...', err);
       stateInfo.lastCommand = null;
       fs.writeFile(commandFilename, '', (err)=>{
+        // This could be a performance bottlneck, not sure what to do.
+        // Best would be to use someting like Redis or something
         if(err) {
-          console.log("Failed to create last command file");
+          console.log("Failed to write last command...");
         }
       }); //Keeping that safe
     }
@@ -77,6 +81,7 @@ const init = function(macId){
     else if(incomingString.length > 10000){
       // Flushing
       // What are the chances that this will split up a legitimate response...
+      // Shouln't be a huge problem because it's always polling
       incomingString = '';
     }
   };
@@ -100,9 +105,10 @@ const init = function(macId){
 
   // Apply last known command upon in case it was turned off...
   // Assuming this is the only way to turn the bulb off...
-  // TODO: May this is not the best of ideas...
+  // TODO: Maybe this is not the best of ideas...
   var applyLastCommand = ()=>{
-    if(iota.isOffCommand(stateInfo.lastCommand)){
+    // If only it's a turn-off command...
+    if(isOffCommand(stateInfo.lastCommand)){
       writeToBulb(stateInfo.lastCommand);
     }
   }
