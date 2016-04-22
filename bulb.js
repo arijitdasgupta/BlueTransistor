@@ -19,6 +19,7 @@ const init = function(macId){
   };
 
   var connectorInterval;
+  var lastCommand;
 
   // Starting the process
   var gatttool = spawn('gatttool', [
@@ -36,15 +37,15 @@ const init = function(macId){
     console.log(theString);
     incomingString += theString;
     if (incomingString.indexOf(connectSuccess) !== -1){
-      clearConnector();
+      connectionSuccess();
       incomingString = '';
     }
     else if(incomingString.indexOf(failure) !== -1){
-      reinitConnector();
+      connectionFailed();
       incomingString = '';
     }
     else if(incomingString.indexOf(error) !== -1){
-      reinitConnector();
+      connectionFailed();
       incomingString = '';
     }
     else if(incomingString.length > 10000){
@@ -56,15 +57,19 @@ const init = function(macId){
   gatttool.stdout.on('data', incomingHandler);
 
   // Clear the connect thingie
-  var clearConnector = ()=>{
+  var connectionSuccess = ()=>{
     stateInfo.online = true;
-    clearInterval(connectorInterval);
+    applyLastCommand();
   }
 
   // Restart the connection trials
-  var reinitConnector = ()=>{
+  var connectionFailed = ()=>{
     stateInfo.online = false;
-    connect();
+  }
+
+  // Apply last known command unpon reconnection... 
+  var applyLastCommand = ()=>{
+    writeToBulb(lastCommand);
   }
 
   // Primary connection
@@ -82,11 +87,16 @@ const init = function(macId){
   }
 
   var writeToBulb = (colorValue)=>{
+    lastCommand = colorValue;
     var writeString = gattWriteString(colorValue);
     write(writeString);
   };
 
   var killDaemon = ()=>{
+    // make sure you delete all the pollers, please!
+    clearInterval(connectorInterval);
+
+    // And then take of the process...
     gatttool.stdin.write('disconnect\n');
     gatttool.stdin.write('exit\n');
     gatttool.stdin.end();
