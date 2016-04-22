@@ -51,24 +51,10 @@ var initiateApp = ()=>{
   });
 }
 
-var initiateEvents = ()=>{
-  var killer = ()=> {
-    console.log('About to exit, terminating all the daemons');
-    _.forEach(bulbs, function(bulb){
-      bulb.killDaemon();
-    });
-    process.exit(0);
-  }
-  process.on('SIGINT', killer);
-  process.on('SIGTERM', killer);
-
-};
-
 // Main entry point
 var init = ()=>{
   initiateBulbs();
   initiateApp();
-  initiateEvents();
 }
 
 // If it's the main, start-it up!

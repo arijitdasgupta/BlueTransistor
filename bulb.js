@@ -1,52 +1,64 @@
 var spawn = require('child_process').spawn;
+var Promise = require('promise');
 
-// TODO: Get status reading
-
-var gattWriteString = function(value){
+const gattWriteString = function(value){
   return 'char-write-cmd 0x002b ' + value + '\n';
 };
 
-var startDaemon = function(macId){
+const init = function(macId){
+  // Status stuff ready
+  var stateInfo = {
+    macId: macId
+  };
+
+  // Starting
   var gatttool = spawn('gatttool', [
     '-I',
     '-b',
     macId
   ]);
 
-  // Primary connection
   gatttool.stdin.setEncoding('utf-8');
-  gatttool.stdin.write('connect\n');
-  // TODO: Add error checking
-  //
-  gatttool.stdout.pipe(process.stdout);
-  return gatttool;
-};
+  gatttool.stdout.on('data', (chunk)=>{
+    console.log("Hellow!");
+    console.log(chunk.toString('utf-8'));
+  });
 
-var writeToBulb = (colorValue, gatttool)=>{
-  var writeString = gattWriteString(colorValue);
-  console.log('Writing...', writeString);
-  gatttool.stdin.write(writeString);
-  // TODO: Return success-failure stream
-};
+  var connect = function(){
+    // Primary connection
+    gatttool.stdin.write('connect\n');
+  };
 
-var killDaemon = (gatttool)=>{
-  gatttool.stdin.write('disconnect\n');
-  gatttool.stdin.write('exit\n');
-  gatttool.stdin.end();
-  gatttool.kill('SIGTERM');
-};
+  var writeToBulb = (colorValue)=>{
+    var writeString = gattWriteString(colorValue);
+    console.log('Writing...', writeString);
+    gatttool.stdin.write(writeString);
+    // TODO: Return success-failure stream
+  };
 
-var init = function(macId){
-  var gatttool = startDaemon(macId);
+  var killDaemon = ()=>{
+    gatttool.stdin.write('disconnect\n');
+    gatttool.stdin.write('exit\n');
+    gatttool.stdin.end();
+    gatttool.kill('SIGTERM');
+  };
+
+  // Making sure things get properly terminated when disconnected
+  var killer = ()=> {
+    console.log('Terminating daemon for ', stateInfo.macId);
+    killDaemon();
+    process.exit(0);
+  };
+
+  process.on('SIGINT', killer);
+  process.on('SIGTERM', killer);
+
+  connect();
 
   return {
-    writeToBulb: (colorValue)=>{
-      writeToBulb(colorValue, gatttool);
-    },
-    killDaemon: ()=>{
-      killDaemon(gatttool);
-    }
-  }
-}
+    writeToBulb: writeToBulb,
+    killDaemon: killDaemon
+  };
+};
 
 module.exports = init;
