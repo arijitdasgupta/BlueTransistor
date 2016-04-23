@@ -19,6 +19,8 @@ node app.js
 
 `config.json` holds the MAC id array of all the bulbs that you want to connect.
 
+Before running, do copy and fill up the MAC IDs from `config.sample.json`.
+
 The webapp runs on `PORT 7000`.
 ###POST
 
