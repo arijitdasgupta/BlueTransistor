@@ -36,22 +36,22 @@ The webapp runs on `PORT 7000`.
       alpha: <ALPHA for Bulb 1>
     },
     [{
-      red: <RED for Bulb 1>,
-      green: <GREEN for Bulb 1>,
-      blue: <BLUE for Bulb 1>,
-      alpha: <ALPHA for Bulb 1>
+      red: <RED for Bulb 2>,
+      green: <GREEN for Bulb 2>,
+      blue: <BLUE for Bulb 2>,
+      alpha: <ALPHA for Bulb 2>
     },
     {
-      red: <RED for Bulb 1>,
-      green: <GREEN for Bulb 1>,
-      blue: <BLUE for Bulb 1>,
-      alpha: <ALPHA for Bulb 1>
+      red: <RED for Bulb 2>,
+      green: <GREEN for Bulb 2>,
+      blue: <BLUE for Bulb 2>,
+      alpha: <ALPHA for Bulb 2>
     },
     {
-      red: <RED for Bulb 1>,
-      green: <GREEN for Bulb 1>,
-      blue: <BLUE for Bulb 1>,
-      alpha: <ALPHA for Bulb 1>
+      red: <RED for Bulb 2>,
+      green: <GREEN for Bulb 2>,
+      blue: <BLUE for Bulb 2>,
+      alpha: <ALPHA for Bulb 2>
     }
     ],
     "off"
@@ -69,7 +69,6 @@ An array of color objects will make the colors rotate randomly. Same command wil
 Also you can go to `/` for a webpage doing the same thing
 
 TODO:
- - Write a better kill script for the process
- - Write a web interface
+ - Write a better kill script for the processes
  - Try out with multiple bulbs
  - Write bot code with web-hooks
