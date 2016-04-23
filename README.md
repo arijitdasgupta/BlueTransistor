@@ -71,4 +71,5 @@ Also you can go to `/` for a webpage doing the same thing
 TODO:
  - Write a better kill script for the processes
  - Try out with multiple bulbs
+ - Add all-bulbs support in the UI
  - Write bot code with web-hooks
