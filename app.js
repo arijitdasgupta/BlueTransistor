@@ -78,6 +78,9 @@ var initiateApp = ()=>{
     res.end();
   });
 
+  webapp.use('/', express.static('public'));
+  webapp.use('/bower_components', express.static('bower_components'));
+
   webapp.listen(7000, ()=>{
     logger.writeLog('Webapp listening on 7000');
   });

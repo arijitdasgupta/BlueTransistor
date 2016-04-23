@@ -1,3 +1,4 @@
 node_modules
 *.command
 config.json
+bower_components

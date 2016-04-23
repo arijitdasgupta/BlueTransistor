@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>iota Lite</title>
+    <script src="/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/colorspace.js"></script>
+    <script src="/script.js"></script>
+    <link rel="stylesheet" href="/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div class="main-wrapper" ng-app="application">
+      <div ng-controller="MainController">
+        <h1>iota Lite Control Panel</h1>
+        <div ng-repeat="bulb in bulbs">
+          <h2>Bulb {{$index + 1}}</h2>
+
+          <div>
+            <div ng-repeat="color in colors"
+              class="color"
+              style="background-color:rgb({{color[0]}},{{color[1]}},{{color[2]}})"
+              ng-click="setColor($parent.$index,color)">
+            </div>
+          </div>
+
+          <button class="control btn" ng-click="toggleChanger($index)">Disco</button>
+          <button class="control btn" ng-click="turnOff($index)">Turn off</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

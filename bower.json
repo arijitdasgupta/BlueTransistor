@@ -1,0 +1,22 @@
+{
+  "name": "iotalitejs",
+  "description": "A library to control iota Lite Bluetooth RGB LED bulb",
+  "main": "app.js",
+  "authors": [
+    "Arijit Dasgupta"
+  ],
+  "license": "MIT",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.5",
+    "lodash": "^4.11.2"
+  }
+}

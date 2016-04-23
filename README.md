@@ -14,6 +14,7 @@ Requirements:
 To Start:
 ```
 npm install
+bower install
 node app.js
 ```
 
@@ -43,6 +44,8 @@ The webapp runs on `PORT 7000`.
 
 ###GET
 `GET` to `/bulbs` will get you the status of the bulbs currently online...
+
+Also you can go to `/` for a webpage doing the same thing
 
 TODO:
  - Write a better kill script for the process
