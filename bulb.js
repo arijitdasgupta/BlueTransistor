@@ -131,8 +131,6 @@ const init = function(macId){
   var applyLastCommand = ()=>{
     // If only it's a turn-off command...
     logger.writeLog('Applying last command', stateInfo.lastCommand);
-    // TODO: Not sure why I did this... but it works
-    var lastCmd = _.trim(stateInfo.lastCommand);
     // Because the bulb will always turn on with the last color,
     // So it doesn't matter
     // Only it was off, we want to turn off...
@@ -160,7 +158,7 @@ const init = function(macId){
     gatttool.stdin.write(writeString);
   }
 
-  var resetAllCommandIntervals = (colorValue)=>{
+  var resetAllCommandIntervals = ()=>{
     // If at all it's rotating stop that before turning it off
     if(colorRotateInterval){
       clearInterval(colorRotateInterval);
@@ -175,9 +173,9 @@ const init = function(macId){
     var writeString = gattWriteString(colorValue);
     write(writeString);
     if(isOffCommand(colorValue)){
-      resetAllCommandIntervals
+      logger.writeLog('this is a off command');
+      resetAllCommandIntervals();
     }
-    resetAllCommandIntervals();
     fs.writeFile(commandFilename, colorValue); //Keeping that safe
     if(stateInfo.online){
       setCommandHandler(()=>{

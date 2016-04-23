@@ -54,7 +54,7 @@ var calculateOnOff = function(on){
 };
 
 var isOffCommand = function(command){
-  return command === '0f0a0d000000000005000013ffff';
+  return _.trim(command) === '0f0a0d000000000005000013ffff';
 };
 
 module.exports = {
