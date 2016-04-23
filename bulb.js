@@ -130,7 +130,7 @@ const init = function(macId){
   var applyLastCommand = ()=>{
     // If only it's a turn-off command...
     logger.writeLog('Applying last command', stateInfo.lastCommand);
-    // TODO: Not sure why I did this...
+    // TODO: Not sure why I did this... but it works
     var lastCmd = _.trim(stateInfo.lastCommand);
     // Because the bulb will always turn on with the last color,
     // So it doesn't matter

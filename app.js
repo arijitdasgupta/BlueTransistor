@@ -23,16 +23,15 @@ var initiateBulbs = ()=>{
   bulbs = _.map(config.bulbMACs, (bulbMAC)=>{
     return new Bulb(bulbMAC);
   })
-}
+};
 
 // Initiate the webapp
 var initiateApp = ()=>{
   webapp = express();
   webapp.use(bodyParser.json());
 
-  webapp.post('/', function(req, res){
+  webapp.post('/', (req, res)=>{
     // Getting the data
-    var resObj = res;
     logger.writeLog(req.body);
     var newData = req.body;
     var commandPromises = _.map(newData.bulbs, (bulbData, index)=>{
@@ -48,9 +47,17 @@ var initiateApp = ()=>{
     });
     Q.all(commandPromises).then((response)=>{
       logger.writeLog('All response done!', response);
-      res.write(response);
+      res.json(response);
       res.end();
     });
+  });
+
+  webapp.get('/', (req, res)=>{
+    // Gets the status of the bulbs
+    res.json(_.map(bulbs, (bulb)=>{
+      return bulb.stateInfo;
+    }));
+    res.end();
   });
 
   webapp.listen(7000, ()=>{
