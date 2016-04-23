@@ -45,6 +45,7 @@ The webapp runs on `PORT 7000`.
 `GET` to `/bulbs` will get you the status of the bulbs currently online...
 
 TODO:
+ - Write a better kill script for the process
  - Write a web interface
  - Try out with multiple bulbs
  - Write bot code with web-hooks
