@@ -13,7 +13,7 @@
       return $http.post('/bulbs', {bulbs:bulbsData}).then(function(response){
         return response.data;
       });
-    }
+    };
 
     return {
       getBulbs: getBulbs,
@@ -83,6 +83,12 @@
     $scope.turnOff = function(bulbindex){
       BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
         return (index === bulbindex)?'off':'unchanged';
+      }));
+    };
+
+    $scope.setChanger = function(bulbindex){
+      BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
+        return (index === bulbindex)?$scope.colors:'unchanged';
       }));
     };
 

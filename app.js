@@ -58,6 +58,12 @@ var initiateApp = ()=>{
         var colorData = _.assign(defaultColorValue, bulbData);
         return bulbs[index].writeToBulb(iota.colorValue(colorData));
       }
+      else if(!_.isString(bulbData) && _.isArray(bulbData)){
+        var deferred = Q.defer();
+        bulbs[index].rotateCommandsRandomly(_.map(bulbData,iota.colorValue));
+        deferred.relove('ROTATING');
+        return deferred.promise;
+      }
       // Of just turn if off
       else if(bulbData === "off"){
         return bulbs[index].writeToBulb(iota.toggle(false));

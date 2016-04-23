@@ -23,6 +23,7 @@ const init = function(macId){
   };
 
   var connectorInterval;
+  var colorRotateInterval;
 
   // Starting the process
   var gatttool = spawn('gatttool', [
@@ -183,6 +184,24 @@ const init = function(macId){
     return deferred.promise;
   };
 
+  // Toggles between random color rotating
+  var rotateCommandsRandomly = (array)=>{
+    if(colorRotateInterval){
+      clearInterval(colorRotateInterval);
+      colorRotateInterval = null;
+    }
+    else{
+      colorRotateInterval = setInterval(new function(){
+        var arrayClosured = array;
+        return function(){
+          var index = Math.floor(Math.random() * arrayClosured.length);
+          var newCommand = arrayClosured[index];
+          writeToBulb(newCommand);
+        }
+      }, 2500);
+    }
+  }
+
   var killDaemon = ()=>{
     // make sure you delete all the pollers, please!
     clearInterval(connectorInterval);
@@ -198,6 +217,7 @@ const init = function(macId){
 
   return {
     stateInfo: stateInfo,
+    rotateCommandsRandomly: rotateCommandsRandomly,
     writeToBulb: writeToBulb,
     killDaemon: killDaemon
   };
