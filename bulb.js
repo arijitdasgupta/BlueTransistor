@@ -160,12 +160,24 @@ const init = function(macId){
     gatttool.stdin.write(writeString);
   }
 
+  var resetAllCommandIntervals = (colorValue)=>{
+    // If at all it's rotating stop that before turning it off
+    if(colorRotateInterval){
+      clearInterval(colorRotateInterval);
+      colorRotateInterval = null;
+    }
+  };
+
   var writeToBulb = (colorValue)=>{
     var deferred = Q.defer();
     var commandTimer;
     stateInfo.lastCommand = colorValue;
     var writeString = gattWriteString(colorValue);
     write(writeString);
+    if(isOffCommand(colorValue)){
+      resetAllCommandIntervals
+    }
+    resetAllCommandIntervals();
     fs.writeFile(commandFilename, colorValue); //Keeping that safe
     if(stateInfo.online){
       setCommandHandler(()=>{
