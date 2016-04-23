@@ -198,7 +198,7 @@ const init = function(macId){
           var newCommand = arrayClosured[index];
           writeToBulb(newCommand);
         }
-      }, 2500);
+      }, 1500);
     }
   }
 

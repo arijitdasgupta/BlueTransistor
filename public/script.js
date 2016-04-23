@@ -88,7 +88,7 @@
 
     $scope.setChanger = function(bulbindex){
       BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
-        return (index === bulbindex)?$scope.colors:'unchanged';
+        return (index === bulbindex)?_.map($scope.colors,getColor):'unchanged';
       }));
     };
 
