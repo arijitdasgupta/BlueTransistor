@@ -134,8 +134,8 @@ const init = function(macId){
     // Because the bulb will always turn on with the last color,
     // So it doesn't matter
     // Only it was off, we want to turn off...
-    if(isOffCommand(lastCmd)){
-      writeToBulb(lastCmd);
+    if(isOffCommand(stateInfo.lastCommand)){
+      writeToBulb(stateInfo.lastCommand);
     }
   }
 
@@ -173,7 +173,6 @@ const init = function(macId){
     var writeString = gattWriteString(colorValue);
     write(writeString);
     if(isOffCommand(colorValue)){
-      logger.writeLog('this is a off command');
       resetAllCommandIntervals();
     }
     fs.writeFile(commandFilename, colorValue); //Keeping that safe

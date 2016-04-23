@@ -35,12 +35,33 @@ The webapp runs on `PORT 7000`.
       blue: <BLUE for Bulb 1>,
       alpha: <ALPHA for Bulb 1>
     },
+    [{
+      red: <RED for Bulb 1>,
+      green: <GREEN for Bulb 1>,
+      blue: <BLUE for Bulb 1>,
+      alpha: <ALPHA for Bulb 1>
+    },
+    {
+      red: <RED for Bulb 1>,
+      green: <GREEN for Bulb 1>,
+      blue: <BLUE for Bulb 1>,
+      alpha: <ALPHA for Bulb 1>
+    },
+    {
+      red: <RED for Bulb 1>,
+      green: <GREEN for Bulb 1>,
+      blue: <BLUE for Bulb 1>,
+      alpha: <ALPHA for Bulb 1>
+    }
+    ],
     "off"
   ]
 }
 ```
 
 "off" will turn the corresponding bulb off. if u want to keep it unchanged, just put some other string, like "unchanged".
+
+An array of color objects will make the colors rotate randomly. Same command will turn if off.
 
 ###GET
 `GET` to `/bulbs` will get you the status of the bulbs currently online...

@@ -28,10 +28,10 @@ var loadConfig = ()=>{
 
 // Will me assigned over the incoming bulb data
 const defaultColorValue = {
-  red: 255,
-  green: 255,
-  blue: 255,
-  alpha: 200
+  "red": 255,
+  "green": 255,
+  "blue": 255,
+  "alpha": 200
 };
 
 // The stateful components
@@ -53,17 +53,19 @@ var initiateApp = ()=>{
     logger.writeLog(req.body);
     var newData = req.body;
     var commandPromises = _.map(newData.bulbs, (bulbData, index)=>{
-      // If there is a legitimate object
-      logger.writeLog(bulbData);
+      // If there is a legitimate object or array do likewise
       if(!_.isString(bulbData) && _.isArray(bulbData)){
         logger.writeLog('Starting to rotate colors on', bulbs[index].stateInfo.macId);
         var deferred = Q.defer();
-        bulbs[index].rotateCommandsRandomly(_.map(bulbData,iota.colorValue));
+        var reformedBulbData = _.map(bulbData, (oneBulb)=>{
+          return _.assign(_.clone(defaultColorValue), oneBulb);
+        });
+        bulbs[index].rotateCommandsRandomly(_.map(reformedBulbData,iota.colorValue));
         deferred.resolve('ROTATING');
         return deferred.promise;
       }
       else if(!_.isString(bulbData) && _.isObject(bulbData)){
-        var colorData = _.assign(defaultColorValue, bulbData);
+        var colorData = _.assign(_.clone(defaultColorValue), bulbData);
         return bulbs[index].writeToBulb(iota.colorValue(colorData));
       }
       // Of just turn if off
