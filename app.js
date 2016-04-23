@@ -2,11 +2,29 @@ var express =    require('express');
 var _ =          require('lodash');
 var bodyParser = require('body-parser');
 var Q =          require('q');
+var fs =         require('fs');
 
 var iota =       require('./iota.js');
 var Bulb =       require('./bulb.js');
-var config =     require('./config.js');
 var logger =     require('./logger.js');
+
+const configFilename = 'config.json';
+
+var config;
+var loadConfig = ()=>{
+  try{
+    fs.statSync(configFilename);
+    logger.writeLog('Loading config');
+    var readString = _.trim(fs.readFileSync(configFilename).toString('utf-8'));
+    config = JSON.parse(readString);
+    init();
+  }
+  catch(err){ // If it doesn't exist
+    logger.writeLog(err);
+    logger.writeLog('Error loading config, exiting');
+    process.exit(0);
+  }
+};
 
 // Will me assigned over the incoming bulb data
 const defaultColorValue = {
@@ -20,7 +38,7 @@ const defaultColorValue = {
 var webapp, bulbs;
 
 var initiateBulbs = ()=>{
-  bulbs = _.map(config.bulbMACs, (bulbMAC)=>{
+  bulbs = _.map(config.bulbs, (bulbMAC)=>{
     return new Bulb(bulbMAC);
   })
 };
@@ -30,7 +48,7 @@ var initiateApp = ()=>{
   webapp = express();
   webapp.use(bodyParser.json());
 
-  webapp.post('/', (req, res)=>{
+  webapp.post('/bulbs', (req, res)=>{
     // Getting the data
     logger.writeLog(req.body);
     var newData = req.body;
@@ -52,7 +70,7 @@ var initiateApp = ()=>{
     });
   });
 
-  webapp.get('/', (req, res)=>{
+  webapp.get('/bulbs', (req, res)=>{
     // Gets the status of the bulbs
     res.json(_.map(bulbs, (bulb)=>{
       return bulb.stateInfo;
@@ -88,5 +106,6 @@ var init = ()=>{
 
 // If it's the main, start-it up!
 if(!module.parent){
-  init();
+  loadConfig();
+  // init();
 }

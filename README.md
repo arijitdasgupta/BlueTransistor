@@ -17,9 +17,12 @@ npm install
 node app.js
 ```
 
-`config.js` holds the MAC id array of all the bulbs that you want to connect.
+`config.json` holds the MAC id array of all the bulbs that you want to connect.
 
-The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
+The webapp runs on `PORT 7000`.
+###POST
+
+`POST` to `/bulbs`,
 ```
 {
   "bulbs": [
@@ -36,9 +39,10 @@ The webapp runs on `PORT 7000`. `POST` to that port, url `/`,
 
 "off" will turn the corresponding bulb off. if u want to keep it unchanged, just put some other string, like "unchanged".
 
+###GET
+`GET` to `/bulbs` will get you the status of the bulbs currently online...
 
 TODO:
- - Make sure status reporting is alright, with promises
- - Make sure the system reports when things fail
+ - Write a web interface
  - Try out with multiple bulbs
  - Write bot code with web-hooks
