@@ -41,8 +41,8 @@
     };
 
     var initiateColors = function(){
-      for(var i = COLOR_RES; i < COLOR_MAX; i += COLOR_RES){
-        for(var j = COLOR_RES; j < COLOR_MAX; j += COLOR_RES){
+      for(var i = 0; i < COLOR_MAX; i += COLOR_RES){
+        for(var j = 0; j < COLOR_MAX; j += COLOR_RES){
           for(var k = COLOR_RES; k < COLOR_MAX; k += COLOR_RES){
             var newColor = hslToRgb(i/COLOR_MAX, j/COLOR_MAX, k/COLOR_MAX);
             $scope.colors.push(newColor);
