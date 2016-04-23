@@ -1,6 +1,7 @@
 var express =    require('express');
 var _ =          require('lodash');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var Q =          require('q');
 
 var iota =       require('./iota.js');
 var Bulb =       require('./bulb.js');
@@ -24,27 +25,32 @@ var initiateBulbs = ()=>{
   })
 }
 
+// Initiate the webapp
 var initiateApp = ()=>{
   webapp = express();
   webapp.use(bodyParser.json());
 
   webapp.post('/', function(req, res){
     // Getting the data
+    var resObj = res;
     logger.writeLog(req.body);
     var newData = req.body;
-    _.forEach(newData.bulbs, (bulbData, index)=>{
+    var commandPromises = _.map(newData.bulbs, (bulbData, index)=>{
       // If there is a legitimate object
       if(!_.isString(bulbData) && _.isObject(bulbData)){
         var colorData = _.assign(defaultColorValue, bulbData);
-        bulbs[index].writeToBulb(iota.colorValue(colorData));
+        return bulbs[index].writeToBulb(iota.colorValue(colorData));
       }
       // Of just turn if off
       else if(bulbData === "off"){
-        bulbs[index].writeToBulb(iota.toggle(false));
+        return bulbs[index].writeToBulb(iota.toggle(false));
       }
     });
-    res.write('DONE');
-    res.end();
+    Q.all(commandPromises).then((response)=>{
+      logger.writeLog('All response done!', response);
+      res.write(response);
+      res.end();
+    });
   });
 
   webapp.listen(7000, ()=>{

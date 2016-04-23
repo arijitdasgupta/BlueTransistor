@@ -3,7 +3,6 @@ var _ =      require('lodash');
 var fs =     require('fs');
 var Q =      require('q');
 var logger = require('./logger.js');
-
 var isOffCommand = require('./iota.js').isOffCommand;
 
 const gattWriteString = function(value){
@@ -35,6 +34,7 @@ const init = function(macId){
 
   // last command filename... yaay!
   var commandFilename = stateInfo.macId + '.command';
+  var commandSuccessCallback = null;
 
   // Creates or read the last command file...
   var createCache = ()=>{
@@ -79,6 +79,10 @@ const init = function(macId){
       connectionFailed();
       incomingString = '';
     }
+    else if(incomingString.indexOf(acknowledgement) !== -1){
+      commandSuccess();
+      incomingString = '';
+    }
     else if(incomingString.length > 10000){
       // Flushing
       // What are the chances that this will split up a legitimate response...
@@ -104,6 +108,21 @@ const init = function(macId){
   var connectionFailed = ()=>{
     logger.writeLog(stateInfo.macId, 'just went offline');
     stateInfo.online = false;
+  }
+
+  // Gets called when command is successful
+  var commandSuccess = ()=>{
+    if(commandSuccessCallback){
+      commandSuccessCallback();
+    }
+  }
+
+  var setCommandHandler = (callback)=>{
+    commandSuccessCallback = callback;
+  }
+
+  var clearCommandHandler = ()=>{
+    commandSuccessCallback = null;
   }
 
   // Apply last known command upon in case it was turned off...
@@ -141,10 +160,27 @@ const init = function(macId){
   }
 
   var writeToBulb = (colorValue)=>{
+    var deferred = Q.defer();
+    var commandTimer;
     stateInfo.lastCommand = colorValue;
     var writeString = gattWriteString(colorValue);
     write(writeString);
     fs.writeFile(commandFilename, colorValue); //Keeping that safe
+    if(stateInfo.online){
+      setCommandHandler(()=>{
+        clearTimeout(commandTimer);
+        clearCommandHandler();
+        deferred.resolve(stateInfo);
+      });
+      commandTimer = setTimeout(()=>{
+        clearCommandHandler();
+        deferred.resolve('failed');
+      }, 10000);
+    }
+    else {
+      deferred.resolve('offline');
+    }
+    return deferred.promise;
   };
 
   var killDaemon = ()=>{
