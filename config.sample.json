@@ -1,5 +1,6 @@
 {
   "bulbs": [
     "<MAC ID>"
-  ]
+  ],
+  "telegramBotToken": "<TELEGRAM TOKEN>"
 }
