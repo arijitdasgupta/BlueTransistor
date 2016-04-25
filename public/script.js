@@ -28,9 +28,6 @@
 
     $scope.setAll = false;
 
-    var COLOR_MAX = 100;
-    var COLOR_RES = 20;
-
     var timerIntervals;
 
     var init = function(){
@@ -44,10 +41,14 @@
 
     // Very crude color palette generator
     var initiateColors = function(){
-      for(var i = 0; i < COLOR_MAX; i += COLOR_RES){
-        for(var j = 0; j < COLOR_MAX; j += COLOR_RES){
-          for(var k = COLOR_RES; k < COLOR_MAX; k += COLOR_RES){
-            var newColor = hslToRgb(i/COLOR_MAX, j/COLOR_MAX, k/COLOR_MAX);
+      var COLOR_MAX = 255;
+      var COLOR_RES = 192;
+      var COLOR_MIN = 32;
+
+      for(var i = COLOR_MIN; i < COLOR_MAX; i += COLOR_RES){
+        for(var j = COLOR_MIN; j < COLOR_MAX; j += COLOR_RES){
+          for(var k = COLOR_MIN; k < COLOR_MAX; k += COLOR_RES){
+            var newColor = [i, j, k];
             $scope.colors.push(newColor);
           }
         }
@@ -132,16 +133,16 @@
     };
 
     $scope.toggleChangerAll = function(){
-      var isOneInterval = _.filter(timerIntervals,(interval)=>{return !!interval;}).length !== 0;
+      var isOneInterval = _.filter(timerIntervals,function(interval){return !!interval;}).length !== 0;
       if(isOneInterval){
-        _.forEach($scope.bulbs, (bulb, index)=>{
+        _.forEach($scope.bulbs, function(bulb, index){
           clearInterval(timerIntervals[index]);
           timerIntervals[index] = null;
         });
       }
       else {
-        _.forEach($scope.bulbs, (bulb, index)=>{
-          timerIntervals[index] = setInterval(()=>{
+        _.forEach($scope.bulbs, function(bulb, index){
+          timerIntervals[index] = setInterval(function(){
             var index = Math.floor(Math.random() * $scope.colors.length);
             var newColor = $scope.colors[index];
             BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
