@@ -4,6 +4,9 @@
   (:require [clojure.data.json :as json])
   (:require [webhook.telegram-urls :as telegram-urls]))
 
+(def bot-token
+  nil)
+
 (defn read-config
   []
   (let [the-config-str (slurp "../config.json")] ; Reading the config file
@@ -14,13 +17,23 @@
   nil)
 
 (defn get-updates
-  []
-  nil)
+  [offset]
+  (let [
+    body (json/write-str {"timeout" 10 "offset" offset "limit" 100})
+    options {
+      :url (telegram-urls/get-updates bot-token)
+      :method :get
+      :headers {
+        "Content-type" "application/json"}
+      :body body}]
+    @(http/request options)))
 
 (defn- run
   []
-  (let [botToken (get (read-config) "telegramBotToken")]
-    (println @(http/get (telegram-urls/get-me botToken)))))
+  (let [bot-token (get (read-config) "telegramBotToken")]
+    (def bot-token bot-token)
+    ; (println @(http/get (telegram-urls/get-me bot-token)))
+    (println (get-updates ""))))
 
 (defn -main
   "The main entry"
