@@ -13,7 +13,8 @@
     <div class="main-wrapper" ng-app="application">
       <div ng-controller="MainController">
         <h1>iota Lite Control Panel</h1>
-        <div ng-repeat="bulb in bulbs">
+        <button class = "control btn" ng-click="setAll=!setAll">{{setAll?"Change separately":"Change all together"}}</button>
+        <div ng-if="!setAll" ng-repeat="bulb in bulbs">
           <h2>Bulb {{$index + 1}}</h2>
 
           <div>
@@ -24,9 +25,25 @@
             </div>
           </div>
 
-          <button class="control btn" ng-click="toggleChanger($index)">Disco</button>
-          <button class="control btn" ng-click="setChanger($index)">Long Disco</button>
-          <button class="control btn" ng-click="turnOff($index)">Turn off</button>
+          <button class="control btn btn-round" ng-click="toggleChanger($index)">Disco</button>
+          <button class="control btn btn-round" ng-click="setChanger($index)">Long Disco</button>
+          <button class="control btn btn-round" ng-click="turnOff($index)">Turn off</button>
+        </div>
+
+        <div ng-if="setAll">
+          <h2>All Bulbs</h2>
+
+          <div>
+            <div ng-repeat="color in colors"
+              class="color"
+              style="background-color:rgb({{color[0]}},{{color[1]}},{{color[2]}})"
+              ng-click="setColorAll(color)">
+            </div>
+          </div>
+
+          <button class="control btn btn-round" ng-click="toggleChangerAll()">Disco</button>
+          <button class="control btn btn-round" ng-click="setChangerAll()">Long Disco</button>
+          <button class="control btn btn-round" ng-click="turnOffAll()">Turn off</button>
         </div>
       </div>
     </div>

@@ -1,6 +1,9 @@
 .btn {
   height: 80px;
   width: 80px;
+}
+
+.btn-round {
   border-radius: 40px;
 }
 
