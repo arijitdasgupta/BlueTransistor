@@ -6,7 +6,7 @@
 
 (defn read-config
   []
-  (let [the-config-str (slurp "../config.json")]
+  (let [the-config-str (slurp "../config.json")] ; Reading the config file
     (if the-config-str (json/read-str the-config-str) nil)))
 
 (defn start-getting-updates

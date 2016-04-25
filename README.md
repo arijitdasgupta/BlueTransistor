@@ -61,7 +61,7 @@ The webapp runs on `PORT 7000`.
 
 "off" will turn the corresponding bulb off. if u want to keep it unchanged, just put some other string, like "unchanged".
 
-An array of color objects will make the colors rotate randomly. Same command will turn if off.
+An array of color objects will make the colors rotate randomly. Same command will turn if off. In the UI,  it's possible to toggle the color-changer separately, that way you would have to toggle-off all of those, you would have to separately issue commands to the bulbs.
 
 ###GET
 `GET` to `/bulbs` will get you the status of the bulbs currently online...
@@ -69,7 +69,7 @@ An array of color objects will make the colors rotate randomly. Same command wil
 Also you can go to `/` for a webpage doing the same thing
 
 TODO:
- - Write a better kill script for the processes
- - Try out with multiple bulbs
- - Add all-bulbs support in the UI
+ - Write a better color palette
+ - Write better status feedback
+ - Write a better kill script for the process
  - Write bot code with web-hooks
