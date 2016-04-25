@@ -153,9 +153,5 @@
     };
 
     init();
-
-    // Initiate colors
-
-    // Initiate API
   });
 })();
