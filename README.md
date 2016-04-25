@@ -30,29 +30,29 @@ The webapp runs on `PORT 7000`.
 {
   "bulbs": [
     {
-      red: <RED for Bulb 1>,
-      green: <GREEN for Bulb 1>,
-      blue: <BLUE for Bulb 1>,
-      alpha: <ALPHA for Bulb 1>
+      "red": "<RED for Bulb 1>",
+      "green": "<GREEN for Bulb 1>",
+      "blue": "<BLUE for Bulb 1>",
+      "alpha": "<ALPHA for Bulb 1>"
     },
     [
      {
-       red: <RED for Bulb 2>,
-       green: <GREEN for Bulb 2>,
-       blue: <BLUE for Bulb 2>,
-       alpha: <ALPHA for Bulb 2>
+       "red": "<RED for Bulb 2>",
+       "green": "<GREEN for Bulb 2>",
+       "blue": "<BLUE for Bulb 2>",
+       "alpha": "<ALPHA for Bulb 2>"
      },
      {
-       red: <RED for Bulb 2>,
-       green: <GREEN for Bulb 2>,
-       blue: <BLUE for Bulb 2>,
-       alpha: <ALPHA for Bulb 2>
+       "red": "<RED for Bulb 2>",
+       "green": "<GREEN for Bulb 2>",
+       "blue": "<BLUE for Bulb 2>",
+       "alpha": "<ALPHA for Bulb 2>"
      },
      {
-       red: <RED for Bulb 2>,
-       green: <GREEN for Bulb 2>,
-       blue: <BLUE for Bulb 2>,
-       alpha: <ALPHA for Bulb 2>
+       "red": "<RED for Bulb 2>",
+       "green": "<GREEN for Bulb 2>",
+       "blue": "<BLUE for Bulb 2>",
+       "alpha": "<ALPHA for Bulb 2>"
      }
     ],
     "off"
