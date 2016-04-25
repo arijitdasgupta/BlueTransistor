@@ -42,7 +42,7 @@
     // Very crude color palette generator
     var initiateColors = function(){
       var COLOR_MAX = 255;
-      var COLOR_RES = 192;
+      var COLOR_RES = 64;
       var COLOR_MIN = 32;
 
       for(var i = COLOR_MIN; i < COLOR_MAX; i += COLOR_RES){
