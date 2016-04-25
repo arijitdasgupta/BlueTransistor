@@ -26,7 +26,7 @@ The webapp runs on `PORT 7000`.
 ###POST
 
 `POST` to `/bulbs`,
-```
+```json
 {
   "bulbs": [
     {
@@ -35,24 +35,25 @@ The webapp runs on `PORT 7000`.
       blue: <BLUE for Bulb 1>,
       alpha: <ALPHA for Bulb 1>
     },
-    [{
-      red: <RED for Bulb 2>,
-      green: <GREEN for Bulb 2>,
-      blue: <BLUE for Bulb 2>,
-      alpha: <ALPHA for Bulb 2>
-    },
-    {
-      red: <RED for Bulb 2>,
-      green: <GREEN for Bulb 2>,
-      blue: <BLUE for Bulb 2>,
-      alpha: <ALPHA for Bulb 2>
-    },
-    {
-      red: <RED for Bulb 2>,
-      green: <GREEN for Bulb 2>,
-      blue: <BLUE for Bulb 2>,
-      alpha: <ALPHA for Bulb 2>
-    }
+    [
+     {
+       red: <RED for Bulb 2>,
+       green: <GREEN for Bulb 2>,
+       blue: <BLUE for Bulb 2>,
+       alpha: <ALPHA for Bulb 2>
+     },
+     {
+       red: <RED for Bulb 2>,
+       green: <GREEN for Bulb 2>,
+       blue: <BLUE for Bulb 2>,
+       alpha: <ALPHA for Bulb 2>
+     },
+     {
+       red: <RED for Bulb 2>,
+       green: <GREEN for Bulb 2>,
+       blue: <BLUE for Bulb 2>,
+       alpha: <ALPHA for Bulb 2>
+     }
     ],
     "off"
   ]
