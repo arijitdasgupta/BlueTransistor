@@ -135,7 +135,7 @@ const init = function(macId){
     // So it doesn't matter
     // Only it was off, we want to turn off...
     if(isOffCommand(stateInfo.lastCommand)){
-      writeToBulb(stateInfo.lastCommand);
+      writeToBulb(stateInfo.lastCommand, true);
     }
   }
 
@@ -166,13 +166,13 @@ const init = function(macId){
     }
   };
 
-  var writeToBulb = (colorValue)=>{
+  var writeToBulb = (colorValue, internalCall)=>{
     var deferred = Q.defer();
     var commandTimer;
     stateInfo.lastCommand = colorValue;
     var writeString = gattWriteString(colorValue);
     write(writeString);
-    if(isOffCommand(colorValue)){
+    if(!internalCall){
       resetAllCommandIntervals();
     }
     fs.writeFile(commandFilename, colorValue); //Keeping that safe
@@ -205,7 +205,7 @@ const init = function(macId){
         return function(){
           var index = Math.floor(Math.random() * arrayClosured.length);
           var newCommand = arrayClosured[index];
-          writeToBulb(newCommand);
+          writeToBulb(newCommand, true);
         }
       }, 1500);
     }
