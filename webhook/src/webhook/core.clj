@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [clojure.data.json :as json])
   (:require [webhook.telegram :as telegram])
+  (:require [webhook.liteserver :as liteserver])
   (:require [webhook.messages :as messages]))
 
 (def bot-token
@@ -17,15 +18,17 @@
 
 (defn- get-updates
   [& args]
-  (loop [offset (first args)]
-    (let [
-      data (telegram/get-updates bot-token offset)
-      result (get data "result")]
-    (if (messages/any-updates? data)
-      (do
-        (messages/do-whatever result)
-        (recur (messages/get-offset result)))
-      (recur nil)))))
+  (let [
+    offset (first args)
+    data (telegram/get-updates bot-token offset)
+    result (get data "result")]
+  (if (messages/any-updates? data)
+    (do
+      (messages/do-the-thang result
+        #(messages/send-message bot-token %1 %2)
+        #(liteserver/send-update lite-server %))
+      (future (Thread/sleep telegram/request-interval) (get-updates (messages/get-offset result))))
+    (future (Thread/sleep telegram/request-interval) (get-updates nil)))))
 
 (defn- run
   []

@@ -5,6 +5,9 @@
 
 (use 'clostache.parser)
 
+(def request-interval
+  5000)
+
 (defn- parse-data
   [body]
   (json/read-str body))
