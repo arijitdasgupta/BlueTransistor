@@ -1,41 +1,42 @@
 (ns webhook.core
   (:gen-class)
-  (:require [org.httpkit.client :as http])
   (:require [clojure.data.json :as json])
-  (:require [webhook.telegram-urls :as telegram-urls]))
+  (:require [webhook.telegram :as telegram])
+  (:require [webhook.messages :as messages]))
 
 (def bot-token
   nil)
 
-(defn read-config
+(def lite-server
+  nil)
+
+(defn- read-config
   []
   (let [the-config-str (slurp "../config.json")] ; Reading the config file
     (if the-config-str (json/read-str the-config-str) nil)))
 
-(defn start-getting-updates
-  [token]
-  nil)
-
-(defn get-updates
-  [offset]
-  (let [
-    body (json/write-str {"timeout" 10 "offset" offset "limit" 100})
-    options {
-      :url (telegram-urls/get-updates bot-token)
-      :method :get
-      :headers {
-        "Content-type" "application/json"}
-      :body body}]
-    @(http/request options)))
+(defn- get-updates
+  [& args]
+  (loop [offset (first args)]
+    (let [
+      data (telegram/get-updates bot-token offset)
+      result (get data "result")]
+    (if (messages/any-updates? data)
+      (do
+        (messages/do-whatever result)
+        (recur (messages/get-offset result)))
+      (recur nil)))))
 
 (defn- run
   []
-  (let [bot-token (get (read-config) "telegramBotToken")]
+  (let [
+    bot-token (get (read-config) "telegramBotToken" "blah")
+    lite-server (get (read-config) "liteServer" "http://localhost:7000")]
     (def bot-token bot-token)
-    ; (println @(http/get (telegram-urls/get-me bot-token)))
-    (println (get-updates ""))))
+    (def lite-server lite-server)
+    (get-updates)))
 
 (defn -main
-  "The main entry"
+  "The main entry-point"
   [& args]
   (run))

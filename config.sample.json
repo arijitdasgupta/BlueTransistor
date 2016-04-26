@@ -2,5 +2,6 @@
   "bulbs": [
     "<MAC ID>"
   ],
-  "telegramBotToken": "<TELEGRAM TOKEN>"
+  "telegramBotToken": "<TELEGRAM TOKEN>",
+  "liteServer": "http://localhost:7000"
 }
