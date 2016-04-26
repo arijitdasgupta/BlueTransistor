@@ -36,6 +36,10 @@
     {"timeout" 10 "limit" 100}
     (when offset {"offset" offset}))))
 
+(defn- send-message-body
+  [text chat-id]
+  {"chat_id" chat-id "text" text})
+
 (defn get-updates
   [token offset]
   (let [
@@ -46,8 +50,13 @@
 
 (defn get-me
   [token]
-  (bot-action token "getMe"))
+  (let
+    [url (bot-action token "getMe")]
+    (mk-request-to-telegram url :get)))
 
 (defn send-message
-  [token]
-  (bot-action token "sendMessage"))
+  [token text chat-id]
+  (let [
+    url (bot-action token "sendMessage")
+    body (send-message-body text chat-id)]
+    (mk-request-to-telegram url :post body)))

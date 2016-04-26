@@ -1,6 +1,7 @@
 (ns webhook.messages
   (:gen-class)
-  (:require [clojure.data.json :as json]))
+  (:require [clojure.data.json :as json])
+  (:require [webhook.telegram :as telegram]))
 
 (defn any-updates?
   [data]
@@ -23,4 +24,5 @@
 
 (defn do-whatever
   [result]
-  (do (println result)))
+  (do
+    (println (map get-chat-id result))))
