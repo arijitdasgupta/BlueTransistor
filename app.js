@@ -51,26 +51,26 @@ var initiateApp = ()=>{
   webapp.post('/bulbs', (req, res)=>{
     // Getting the data
     logger.writeLog(req.body);
-    var newData = req.body;
-    var commandPromises = _.map(newData.bulbs, (bulbData, index)=>{
+    var newData = req.body.bulbs;
+    var commandPromises = _.map(bulbs, (bulb, index)=>{
       // If there is a legitimate object or array do likewise
-      if(!_.isString(bulbData) && _.isArray(bulbData)){
+      if(!_.isString(newData[index]) && _.isArray(newData[index])){
         logger.writeLog('Starting to rotate colors on', bulbs[index].stateInfo.macId);
         var deferred = Q.defer();
-        var reformedBulbData = _.map(bulbData, (oneBulb)=>{
+        var reformedBulbData = _.map(newData[index], (oneBulb)=>{
           return _.assign(_.clone(defaultColorValue), oneBulb);
         });
-        bulbs[index].rotateCommandsRandomly(_.map(reformedBulbData,iota.colorValue));
+        bulb.rotateCommandsRandomly(_.map(reformedBulbData,iota.colorValue));
         deferred.resolve('ROTATING');
         return deferred.promise;
       }
-      else if(!_.isString(bulbData) && _.isObject(bulbData)){
-        var colorData = _.assign(_.clone(defaultColorValue), bulbData);
-        return bulbs[index].writeToBulb(iota.colorValue(colorData));
+      else if(!_.isString(newData[index]) && _.isObject(newData[index])){
+        var colorData = _.assign(_.clone(defaultColorValue), newData[index]);
+        return bulb.writeToBulb(iota.colorValue(colorData));
       }
       // Of just turn if off
-      else if(bulbData === "off"){
-        return bulbs[index].writeToBulb(iota.toggle(false));
+      else if(newData[index] === "off"){
+        return bulb.writeToBulb(iota.toggle(false));
       }
     });
     Q.all(commandPromises).then((response)=>{
