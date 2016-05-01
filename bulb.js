@@ -157,7 +157,6 @@ const init = function(macId, bulbProtocol){
     catch(err){
       readStuff = _.trim(readString);
     }
-    console.log('last command reading', readStuff);
     return readStuff;
   };
 
@@ -203,7 +202,6 @@ const init = function(macId, bulbProtocol){
     var commandTimer;
     if(stateInfo.online){
      setCommandHandler(()=>{
-       console.log("Handler called");
        clearTimeout(commandTimer);
        clearCommandHandler();
        deferred.resolve(stateInfo);
