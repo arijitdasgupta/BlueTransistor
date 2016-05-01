@@ -14,11 +14,15 @@ var calculateChecksum = function(hexString, salt){
   return checksum;
 }
 
+var normalizeAlpha = function(alpha){
+  return (alpha > 200)?200:alpha;
+}
+
 var calculateColorValue = function(color){
   var red = _.padStart(color.red.toString(16), 2, '0');
   var green = _.padStart(color.green.toString(16), 2, '0');
   var blue = _.padStart(color.blue.toString(16), 2, '0');
-  var alpha = _.padStart(color.alpha.toString(16), 2, '0');
+  var alpha = _.padStart(normalizeAlpha(color.alpha).toString(16), 2, '0');
   var hexString = '0f0d0300' + red + green + blue + alpha + '000000000000';
   var checksum = calculateChecksum(hexString, 0xE5);
   // Get the main string
