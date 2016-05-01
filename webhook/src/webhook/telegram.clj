@@ -1,6 +1,7 @@
 (ns webhook.telegram
   (:require [org.httpkit.client :as http])
   (:require [clojure.data.json :as json])
+  (:require [webhook.helpers :as helpers])
   (:gen-class))
 
 (use 'clostache.parser)
@@ -18,7 +19,7 @@
 
 (defn- bot-action
   [token action]
-  (clojure.string/join  "" [(bot-url token) action]))
+  (helpers/concat-str (bot-url token) action))
 
 ; Returns data from a HTTP request
 (defn- mk-request-to-telegram
@@ -47,8 +48,7 @@
   [token offset]
   (let [
     url (bot-action token "getUpdates")
-    body (get-updates-body offset)
-    ]
+    body (get-updates-body offset)]
     (mk-request-to-telegram url :post body)))
 
 (defn get-me

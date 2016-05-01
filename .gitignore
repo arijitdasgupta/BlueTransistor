@@ -1,4 +1,5 @@
 node_modules
 *.command
+last_update_id.txt
 config.json
 bower_components
