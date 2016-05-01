@@ -79,7 +79,7 @@ You can go to `/` on your browser for a angular webapp doing which has an UI for
 You can use this repository as a node library package.
 
 ```bash
-npm install BlueTransistor
+npm install blue-transistor
 ```
 
 ```javascript
