@@ -1,7 +1,8 @@
 {
   "bulbs": [
-    "<MAC ID>"
+     {"macId": "<MAC ID>", "type": "iota"},
+     {"macId": "<MAC ID>", "type": "iota"}
   ],
-  "telegramBotToken": "<TELEGRAM TOKEN>",
-  "liteServer": "http://localhost:7000"
+  "telegramBotToken": "<TELEGRAM TOKEN NOT NEEDED AS OF NOW>",
+  "liteServer": "http://localhost:7000 <NOT NEEDED AS OF NOW>"
 }

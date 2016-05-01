@@ -15,6 +15,7 @@ const STATE_ROTATING = 'ROTATING';
 const STATE_OFF = 'OFF';
 
 const RESPONSE_STOPPED = 'STOPPED';
+const RESPONSE_UNCHANGED = 'UNCHANGED';
 
 // Will me assigned over the incoming bulb data
 const defaultColorValue = {
@@ -32,8 +33,6 @@ const init = function(macId, bulbProtocol){
     lastCommand: undefined, //Initial flag, might not be a good idea. Bad design
     mode: 'off'
   };
-
-  const bulbProtocol = bulbProtocol;
 
   var connectorInterval;
   var colorRotateInterval;
@@ -104,7 +103,7 @@ const init = function(macId, bulbProtocol){
   var connectionSuccess = ()=>{
     logger.writeLog(stateInfo.macId, 'is back online');
     stateInfo.online = true;
-    if(stateInfo.lastCommand === 'nonzero'){
+    if(stateInfo.lastCommand === undefined){
       createCache();
     }
     else{
@@ -148,7 +147,7 @@ const init = function(macId, bulbProtocol){
   };
 
   var readLastCommand = ()=>{
-    var readString = (fs.readFileSync(commandFilename).toString('utf-8'));
+    var readString = fs.readFileSync(commandFilename).toString('utf-8');
     var readStuff;
     try {
       readStuff = JSON.parse(readString);
@@ -156,6 +155,7 @@ const init = function(macId, bulbProtocol){
     catch(err){
       readStuff = _.trim(readString);
     }
+    console.log('last command reading', readStuff);
     return readStuff;
   };
 
@@ -172,14 +172,11 @@ const init = function(macId, bulbProtocol){
   var applyLastCommand = ()=>{
     // If only it's a turn-off command...
     logger.writeLog('Applying last command', stateInfo.lastCommand);
-    writeToBulb(stateInfo.lastCommand, true);
+    writeToBulb(stateInfo.lastCommand);
   };
 
-  var pushToBulb = (colorData, internalCall)=>{
-    // Setting the last state values
-    var colorValue = _.assign(_.clone(defaultColorValue), colorData);
-
-    var writeString = bulbProtocol.gattWriteString(colorValue);
+  var pushToBulb = (command)=>{
+    var writeString = bulbProtocol.gattWriteString(command);
     logger.writeLog('Writing...', writeString);
     gatttool.stdin.write(writeString);
   };
@@ -200,10 +197,11 @@ const init = function(macId, bulbProtocol){
     }, 1500);
   };
 
-  var setCommandResolver(deferred)=>{
+  var setCommandResolver = (deferred)=>{
     var commandTimer;
     if(stateInfo.online){
      setCommandHandler(()=>{
+       console.log("Handler called");
        clearTimeout(commandTimer);
        clearCommandHandler();
        deferred.resolve(stateInfo);
@@ -229,10 +227,10 @@ const init = function(macId, bulbProtocol){
   var writeToBulb = (bulbData)=>{
     var deferred = Q.defer();
     stateInfo.lastCommand = bulbData;
-    writeLastCommand(bulbData);
     if(!_.isString(bulbData) && _.isArray(bulbData)){
+      writeLastCommand(bulbData);
       stateInfo.mode = STATE_ROTATING;
-      logger.writeLog('Starting to rotate colors on', bulbs[index].stateInfo.macId);
+      logger.writeLog('Starting to rotate colors on', stateInfo.macId);
       var reformedBulbData = _.map(bulbData, (oneBulb)=>{
         return _.assign(_.clone(defaultColorValue), oneBulb);
       });
@@ -241,22 +239,29 @@ const init = function(macId, bulbProtocol){
       return deferred.promise;
     }
     else if(!_.isString(bulbData) && _.isObject(bulbData)){
+      writeLastCommand(bulbData);
       stateInfo.mode = STATE_STATIC;
       resetAllCommandIntervals();
-      pushToBulb(bulbProtocol.colorValue(colorData));
+      var rawCommand = bulbProtocol.colorValue(_.assign(_.clone(defaultColorValue), bulbData));
+      pushToBulb(rawCommand);
       setCommandResolver(deferred);
     }
     // Stop rotation
     else if(bulbData === 'stop'){
+      writeLastCommand(bulbData);
       stateInfo.mode = STATE_STATIC;
       resetAllCommandIntervals();
       deferred.resolve(RESPONSE_STOPPED);
     }
     else if(bulbData === 'off'){
+      writeLastCommand(bulbData);
       stateInfo.mode = STATE_OFF;
       pushToBulb(bulbProtocol.toggle(false));
       resetAllCommandIntervals();
       setCommandResolver(deferred);
+    }
+    else {
+      deferred.resolve(RESPONSE_UNCHANGED);
     }
     return deferred.promise;
   };

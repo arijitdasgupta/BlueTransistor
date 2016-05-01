@@ -104,7 +104,7 @@ var initiateEventHandlers = ()=>{
 // Main entry point
 var init = ()=>{
   initiateBulbs()
-  .then(initiateEventHandlers);
+  .then(initiateEventHandlers)
   .then(initiateApp);
 }
 
