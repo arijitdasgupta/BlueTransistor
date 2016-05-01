@@ -78,9 +78,13 @@ You can go to `/` on your browser for a angular webapp doing which has an UI for
 ###The lib
 You can use this repository as a node library package.
 
+```bash
+npm install BlueTransistor
+```
+
 ```javascript
-BulbFactory = require('BlueTransistor');
-BulbFactory.registerBulb({
+BlueTransistor = require('blue-transistor');
+BlueTransistor.registerBulb({
   macId: '<MAC ID>',
   type: 'iota'
 }).init().then(function(bulbs){
@@ -89,19 +93,25 @@ BulbFactory.registerBulb({
     blue: 255,
     green: 255,
     alpha: 255
+  }).then(function(resp){
+    console.log(resp);
+
+    // Status of the bulb
+    console.log(bulbs[0].stateInfo);
+
+    // Kill the GATTtool process
+    bulbs[0].killDaemon();
   });
-  // Kills the GATTtool process as well
-  bulbs[0].killDaemon();
 });
 ```
 
-###NOTE:
-To properly kill the process kill the `node` instance with a SIGINT. It will terminal all the child processes as well.
+###NOTES:
+ - While running the app or when used as a library it will keep polling the Bluetooth bulb and maintain it's connection status. So other Bluetooth host can connect to the same bulbs as long as the object instances (or the application) is alive.
+ - To properly kill the app kill the `node` process with a SIGINT. It will terminate all the child processes as well.
 
 ###TODO:
- - Write a better color selector
- - Write a Yeelight bulb protocol class
- - Write auto-scan for bulbs
- - Write a kill script for the processes
- - Write a doc site for the library.
- - Write bot code with web-hooks
+ - Write a better color selector in the UI.
+ - Write a Yeelight Blue II (http://www.yeelight.co.uk/yeelight-blue-ii-bulb/) protocol class.
+ - Write auto-scan for bulbs.
+ - Write a kill script for the processes.
+ - Write a doc site.

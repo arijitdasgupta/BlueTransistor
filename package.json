@@ -1,5 +1,5 @@
 {
-  "name": "BlueTransistor",
+  "name": "blue-transistor",
   "version": "1.1.0",
   "description": "A library to control RGB Bluetooth LE bulbs",
   "main": "app.js",
