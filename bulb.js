@@ -15,14 +15,15 @@ const STATE_ROTATING = 'ROTATING';
 const STATE_OFF = 'OFF';
 
 const RESPONSE_STOPPED = 'STOPPED';
-const RESPONSE_UNCHANGED = 'UNCHANGED';
+const RESPONSE_CHANGED = 'ACK';
+const RESPONSE_UNCHANGED = 'NO COMMAND';
 
 // Will me assigned over the incoming bulb data
 const defaultColorValue = {
   "red": 255,
   "green": 255,
   "blue": 255,
-  "alpha": 200
+  "alpha": 255
 };
 
 const init = function(macId, bulbProtocol){
@@ -31,7 +32,8 @@ const init = function(macId, bulbProtocol){
     macId: macId,
     online: false,
     lastCommand: undefined, //Initial flag, might not be a good idea. Bad design
-    mode: 'off'
+    mode: 'off',
+    status: RESPONSE_CHANGED
   };
 
   var connectorInterval;
@@ -261,7 +263,7 @@ const init = function(macId, bulbProtocol){
       setCommandResolver(deferred);
     }
     else {
-      deferred.resolve(RESPONSE_UNCHANGED);
+      deferred.resolve(_.assign(_.clone(stateInfo, true), {status: RESPONSE_UNCHANGED}));
     }
     return deferred.promise;
   };
