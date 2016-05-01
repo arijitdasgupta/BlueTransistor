@@ -1,4 +1,4 @@
-RGB Bluetooth Bulb Controller
+BlueTransistor
 =============================
 
 Control your RGB Bluetooth LE bulbs from an webapp, or use as a node package. Currently iota Bulb (http://goiota.com/) is supported. More Bluetooth LE bulb support coming soon. Best works with Raspberry Pi (3 or with a Bluetooth dongle).
@@ -76,7 +76,7 @@ Post an array to `/bulbs` endpoint with each entry on that array corresponding t
 You can go to `/` on your browser for a angular webapp doing which has an UI for the bulbs.
 
 ###The lib
-You can use this repository as a node library package. Currently it's not yet publish. Will be published soon.
+You can use this repository as a node library package.
 
 ```javascript
 BulbFactory = require('BlueTransistor');
@@ -90,11 +90,13 @@ BulbFactory.registerBulb({
     green: 255,
     alpha: 255
   });
+  // Kills the GATTtool process as well
+  bulbs[0].killDaemon();
 });
 ```
 
 ###NOTE:
-To properly kill the process kill the `node` instance with a SIGINT.
+To properly kill the process kill the `node` instance with a SIGINT. It will terminal all the child processes as well.
 
 ###TODO:
  - Write a better color selector
