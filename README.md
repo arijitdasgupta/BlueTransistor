@@ -14,10 +14,16 @@ Requirements:
 
 `config.json` holds the MAC id array of all the bulbs and their types that you want to connect. Before running, do copy `config.sample.json` to `config.json` & fill up the MAC IDs in `config.json`.
 
-```
+```bash
 npm install
 bower install
 node app.js
+```
+
+OR,
+
+```bash
+./run.sh
 ```
 
 The webapp runs on `PORT 7000`.
