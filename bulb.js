@@ -45,22 +45,24 @@ const init = function(macId, bulbProtocol){
 
   // Creates or read the last command file...
   var createCache = ()=>{
-    try{
-      fs.statSync(commandFilename);
-      logger.writeLog('Loading last command for ', stateInfo.macId);
-      stateInfo.lastCommand = readLastCommand();
-      logger.writeLog('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
-      applyLastCommand();
-    }
-    catch(err){ // If it doesn't exist or JSON parse fails it resets
-      logger.writeLog(commandFilename, 'doesnt exist. Creating...', err);
-      stateInfo.lastCommand = null;
-      fs.writeFile(commandFilename, stateInfo.lastCommand, (err)=>{
-        // Best would be to use someting like Redis (overkill!)
-        if(err) {
-          logger.writeLog("Failed to write last command...");
-        }
-      });
+    if(GLOBAL.blue_transistor_app_run_flag){
+      try{
+        fs.statSync(commandFilename);
+        logger.writeLog('Loading last command for ', stateInfo.macId);
+        stateInfo.lastCommand = readLastCommand();
+        logger.writeLog('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
+        applyLastCommand();
+      }
+      catch(err){ // If it doesn't exist or JSON parse fails it resets
+        logger.writeLog(commandFilename, 'doesnt exist. Creating...', err);
+        stateInfo.lastCommand = null;
+        fs.writeFile(commandFilename, stateInfo.lastCommand, (err)=>{
+          // Best would be to use someting like Redis (overkill!)
+          if(err) {
+            logger.writeLog("Failed to write last command...");
+          }
+        });
+      }
     }
   };
 
@@ -161,19 +163,23 @@ const init = function(macId, bulbProtocol){
   };
 
   var writeLastCommand = (object)=>{
-    if(_.isString(object)){
-      fs.writeFile(commandFilename, object);
-    }
-    else {
-      fs.writeFile(commandFilename, JSON.stringify(object));
+    if(GLOBAL.blue_transistor_app_run_flag){
+      if(_.isString(object)){
+        fs.writeFile(commandFilename, object);
+      }
+      else {
+        fs.writeFile(commandFilename, JSON.stringify(object));
+      }
     }
   };
 
   // Apply last known command...
   var applyLastCommand = ()=>{
-    // If only it's a turn-off command...
-    logger.writeLog('Applying last command', stateInfo.lastCommand);
-    writeToBulb(stateInfo.lastCommand);
+    if(GLOBAL.blue_transistor_app_run_flag){
+      // If only it's a turn-off command...
+      logger.writeLog('Applying last command', stateInfo.lastCommand);
+      writeToBulb(stateInfo.lastCommand);
+    }
   };
 
   var pushToBulb = (command)=>{

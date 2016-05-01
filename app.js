@@ -110,6 +110,7 @@ var init = ()=>{
 
 // If it's the main, start-it up or can be used as a module!
 if(!module.parent){
+  GLOBAL.blue_transistor_app_run_flag = true; //For enabling logging
   loadConfig();
 }
 else {
