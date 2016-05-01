@@ -1,5 +1,9 @@
 var _     = require('lodash');
 
+var gattWriteString = function(value){
+  return 'char-write-cmd 0x002b ' + value + '\n';
+};
+
 var calculateChecksum = function(hexString, salt){
   var byteArray = _.map(_.chunk(hexString, 2), (i)=>{
     return parseInt(i[0] + i[1], 16);
@@ -53,12 +57,13 @@ var calculateOnOff = function(on){
   return hexString + checksum + 'ffff\n';
 };
 
-var isOffCommand = function(command){
-  return _.trim(command) === '0f0a0d000000000005000013ffff';
+var isOffCommand = function(rawCommand){
+  return _.trim(rawCommand) === '0f0a0d000000000005000013ffff';
 };
 
 module.exports = {
   isOffCommand: isOffCommand,
   colorValue: calculateColorValue,
-  toggle: calculateOnOff
+  toggle: calculateOnOff,
+  gattWriteString: gattWriteString,
 };

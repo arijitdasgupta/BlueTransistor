@@ -2,38 +2,43 @@ var spawn =  require('child_process').spawn;
 var _ =      require('lodash');
 var fs =     require('fs');
 var Q =      require('q');
-var logger = require('./logger.js');
-var isOffCommand = require('./iota.js').isOffCommand;
 
-const gattWriteString = function(value){
-  return 'char-write-cmd 0x002b ' + value + '\n';
-};
+var logger = require('./logger.js');
 
 const connectSuccess = 'Connection successful';
 const acknowledgement = 'Notification handle';
 const error = 'Error';
 const failure = 'Command Failed';
 
-const init = function(macId){
+const STATE_STATIC = 'STATIC';
+const STATE_ROTATING = 'ROTATING';
+const STATE_OFF = 'OFF';
+
+const RESPONSE_STOPPED = 'STOPPED';
+
+// Will me assigned over the incoming bulb data
+const defaultColorValue = {
+  "red": 255,
+  "green": 255,
+  "blue": 255,
+  "alpha": 200
+};
+
+const init = function(macId, bulbProtocol){
   // Status stuff
   var stateInfo = {
     macId: macId,
     online: false,
-    lastCommand: 'nonzero' //Initial flag, might not be a good idea. Bad design
+    lastCommand: undefined, //Initial flag, might not be a good idea. Bad design
+    mode: 'off'
   };
+
+  const bulbProtocol = bulbProtocol;
 
   var connectorInterval;
   var colorRotateInterval;
 
-  // Starting the process
-  var gatttool = spawn('gatttool', [
-    '-I',
-    '-b',
-    macId
-  ]);
-  gatttool.stdin.setEncoding('utf-8');
-
-  // last command filename... yaay!
+  // Last command filename... yaay!
   var commandFilename = stateInfo.macId + '.command';
   var commandSuccessCallback = null;
 
@@ -42,31 +47,33 @@ const init = function(macId){
     try{
       fs.statSync(commandFilename);
       logger.writeLog('Loading last command for ', stateInfo.macId);
-      var readString = _.trim(fs.readFileSync(commandFilename).toString('utf-8'));
-      stateInfo.lastCommand = (readString === '')?null:readString;
-      if(stateInfo.lastCommand){
-        logger.writeLog('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
-        applyLastCommand();
-      }
+      stateInfo.lastCommand = readLastCommand();
+      logger.writeLog('Last command for', stateInfo.macId, 'is', stateInfo.lastCommand);
+      applyLastCommand();
     }
-    catch(err){ // If it doesn't exist
+    catch(err){ // If it doesn't exist or JSON parse fails it resets
       logger.writeLog(commandFilename, 'doesnt exist. Creating...', err);
       stateInfo.lastCommand = null;
-      fs.writeFile(commandFilename, '', (err)=>{
-        // This could be a performance bottlneck, not sure what to do.
-        // Best would be to use someting like Redis or something
+      fs.writeFile(commandFilename, stateInfo.lastCommand, (err)=>{
+        // Best would be to use someting like Redis (overkill!)
         if(err) {
           logger.writeLog("Failed to write last command...");
         }
-      }); //Keeping that safe
+      });
     }
-  }
+  };
 
+  // Starting the process
+  var gatttool = spawn('gatttool', [
+    '-I',
+    '-b',
+    macId
+  ]);
+  gatttool.stdin.setEncoding('utf-8');
   // Managing the incoming streams
   var incomingString = '';
   var incomingHandler = (chunk)=>{
     var theString = chunk.toString('utf-8');
-    // logger.writeLog(theString);
     incomingString += theString;
     if (incomingString.indexOf(connectSuccess) !== -1){
       connectionSuccess();
@@ -116,28 +123,15 @@ const init = function(macId){
     if(commandSuccessCallback){
       commandSuccessCallback();
     }
-  }
+  };
 
   var setCommandHandler = (callback)=>{
     commandSuccessCallback = callback;
-  }
+  };
 
   var clearCommandHandler = ()=>{
     commandSuccessCallback = null;
-  }
-
-  // Apply last known command upon in case it was turned off...
-  // Assuming this is the only way to turn the bulb off...
-  var applyLastCommand = ()=>{
-    // If only it's a turn-off command...
-    logger.writeLog('Applying last command', stateInfo.lastCommand);
-    // Because the bulb will always turn on with the last color,
-    // So it doesn't matter
-    // Only it was off, we want to turn off...
-    if(isOffCommand(stateInfo.lastCommand)){
-      writeToBulb(stateInfo.lastCommand, true);
-    }
-  }
+  };
 
   // Primary connection
   // This is dangerous, but with great power comes great responsibility...
@@ -153,10 +147,76 @@ const init = function(macId){
     }, 2000);
   };
 
-  var write = (writeString)=>{
+  var readLastCommand = ()=>{
+    var readString = (fs.readFileSync(commandFilename).toString('utf-8'));
+    var readStuff;
+    try {
+      readStuff = JSON.parse(readString);
+    }
+    catch(err){
+      readStuff = _.trim(readString);
+    }
+    return readStuff;
+  };
+
+  var writeLastCommand = (object)=>{
+    if(_.isString(object)){
+      fs.writeFile(commandFilename, object);
+    }
+    else {
+      fs.writeFile(commandFilename, JSON.stringify(object));
+    }
+  };
+
+  // Apply last known command...
+  var applyLastCommand = ()=>{
+    // If only it's a turn-off command...
+    logger.writeLog('Applying last command', stateInfo.lastCommand);
+    writeToBulb(stateInfo.lastCommand, true);
+  };
+
+  var pushToBulb = (colorData, internalCall)=>{
+    // Setting the last state values
+    var colorValue = _.assign(_.clone(defaultColorValue), colorData);
+
+    var writeString = bulbProtocol.gattWriteString(colorValue);
     logger.writeLog('Writing...', writeString);
     gatttool.stdin.write(writeString);
-  }
+  };
+
+  // Toggles between random color rotating
+  var rotateCommandsRandomly = (array)=>{
+    if(colorRotateInterval){
+      clearInterval(colorRotateInterval);
+      colorRotateInterval = null;
+    }
+    colorRotateInterval = setInterval(new function(){
+      var arrayClosured = array;
+      return function(){
+        var index = Math.floor(Math.random() * arrayClosured.length);
+        var newCommand = arrayClosured[index];
+        pushToBulb(newCommand);
+      }
+    }, 1500);
+  };
+
+  var setCommandResolver(deferred)=>{
+    var commandTimer;
+    if(stateInfo.online){
+     setCommandHandler(()=>{
+       clearTimeout(commandTimer);
+       clearCommandHandler();
+       deferred.resolve(stateInfo);
+     });
+     commandTimer = setTimeout(()=>{
+       clearCommandHandler();
+       deferred.resolve('failed');
+     }, 10000);
+    }
+    else {
+      deferred.resolve('offline');
+    }
+  };
 
   var resetAllCommandIntervals = ()=>{
     // If at all it's rotating stop that before turning it off
@@ -166,50 +226,40 @@ const init = function(macId){
     }
   };
 
-  var writeToBulb = (colorValue, internalCall)=>{
+  var writeToBulb = (bulbData)=>{
     var deferred = Q.defer();
-    var commandTimer;
-    stateInfo.lastCommand = colorValue;
-    var writeString = gattWriteString(colorValue);
-    write(writeString);
-    if(!internalCall){
-      resetAllCommandIntervals();
-    }
-    fs.writeFile(commandFilename, colorValue); //Keeping that safe
-    if(stateInfo.online){
-      setCommandHandler(()=>{
-        clearTimeout(commandTimer);
-        clearCommandHandler();
-        deferred.resolve(stateInfo);
+    stateInfo.lastCommand = bulbData;
+    writeLastCommand(bulbData);
+    if(!_.isString(bulbData) && _.isArray(bulbData)){
+      stateInfo.mode = STATE_ROTATING;
+      logger.writeLog('Starting to rotate colors on', bulbs[index].stateInfo.macId);
+      var reformedBulbData = _.map(bulbData, (oneBulb)=>{
+        return _.assign(_.clone(defaultColorValue), oneBulb);
       });
-      commandTimer = setTimeout(()=>{
-        clearCommandHandler();
-        deferred.resolve('failed');
-      }, 10000);
+      rotateCommandsRandomly(_.map(reformedBulbData, bulbProtocol.colorValue));
+      deferred.resolve(stateInfo);
+      return deferred.promise;
     }
-    else {
-      deferred.resolve('offline');
+    else if(!_.isString(bulbData) && _.isObject(bulbData)){
+      stateInfo.mode = STATE_STATIC;
+      resetAllCommandIntervals();
+      pushToBulb(bulbProtocol.colorValue(colorData));
+      setCommandResolver(deferred);
+    }
+    // Stop rotation
+    else if(bulbData === 'stop'){
+      stateInfo.mode = STATE_STATIC;
+      resetAllCommandIntervals();
+      deferred.resolve(RESPONSE_STOPPED);
+    }
+    else if(bulbData === 'off'){
+      stateInfo.mode = STATE_OFF;
+      pushToBulb(bulbProtocol.toggle(false));
+      resetAllCommandIntervals();
+      setCommandResolver(deferred);
     }
     return deferred.promise;
   };
-
-  // Toggles between random color rotating
-  var rotateCommandsRandomly = (array)=>{
-    if(colorRotateInterval){
-      clearInterval(colorRotateInterval);
-      colorRotateInterval = null;
-    }
-    else{
-      colorRotateInterval = setInterval(new function(){
-        var arrayClosured = array;
-        return function(){
-          var index = Math.floor(Math.random() * arrayClosured.length);
-          var newCommand = arrayClosured[index];
-          writeToBulb(newCommand, true);
-        }
-      }, 1500);
-    }
-  }
 
   var killDaemon = ()=>{
     // make sure you delete all the pollers, please!
@@ -226,7 +276,6 @@ const init = function(macId){
 
   return {
     stateInfo: stateInfo,
-    rotateCommandsRandomly: rotateCommandsRandomly,
     writeToBulb: writeToBulb,
     killDaemon: killDaemon
   };

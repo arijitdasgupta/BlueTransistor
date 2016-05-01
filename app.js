@@ -4,13 +4,15 @@ var bodyParser = require('body-parser');
 var Q =          require('q');
 var fs =         require('fs');
 
-var iota =       require('./iota.js');
-var Bulb =       require('./bulb.js');
-var logger =     require('./logger.js');
+var BulbFactory = require('./bulb-factory.js');
+var logger =      require('./logger.js');
 
 const configFilename = 'config.json';
 
-var config;
+// The stateful components
+var webapp, bulbs, config;
+
+// This is the entry point to the application
 var loadConfig = ()=>{
   try{
     fs.statSync(configFilename);
@@ -26,53 +28,38 @@ var loadConfig = ()=>{
   }
 };
 
-// Will me assigned over the incoming bulb data
-const defaultColorValue = {
-  "red": 255,
-  "green": 255,
-  "blue": 255,
-  "alpha": 200
-};
-
-// The stateful components
-var webapp, bulbs;
-
 var initiateBulbs = ()=>{
-  bulbs = _.map(config.bulbs, (bulbMAC)=>{
-    return new Bulb(bulbMAC);
-  })
+  var deferred = Q.defer();
+  _.reduce(config.bulbs, (Factory, bulb)=>{
+    return Factory.registerBulb(bulb);
+  }, BulbFactory)
+  .init()
+  .then((newBulbs)=>{
+    bulbs = newBulbs;
+    deferred.resolve(true);
+  });
+  return deferred.promise;
 };
 
-// Initiate the webapp
 var initiateApp = ()=>{
   webapp = express();
   webapp.use(bodyParser.json());
 
   webapp.post('/bulbs', (req, res)=>{
-    // Getting the data
     logger.writeLog(req.body);
     var newData = req.body.bulbs;
     var commandPromises = _.map(bulbs, (bulb, index)=>{
-      // If there is a legitimate object or array do likewise
-      if(!_.isString(newData[index]) && _.isArray(newData[index])){
-        logger.writeLog('Starting to rotate colors on', bulbs[index].stateInfo.macId);
+      var oneBulb = newData[index];
+      if (_.isString(oneBulb) || _.isArray(oneBulb) || _.isObject(oneBulb)) {
+        return bulb.writeToBulb(oneBulb);
+      }
+      else {
         var deferred = Q.defer();
-        var reformedBulbData = _.map(newData[index], (oneBulb)=>{
-          return _.assign(_.clone(defaultColorValue), oneBulb);
-        });
-        bulb.rotateCommandsRandomly(_.map(reformedBulbData,iota.colorValue));
-        deferred.resolve('ROTATING');
+        deferred.resolve('ERROR ON BULB COMMAND');
         return deferred.promise;
       }
-      else if(!_.isString(newData[index]) && _.isObject(newData[index])){
-        var colorData = _.assign(_.clone(defaultColorValue), newData[index]);
-        return bulb.writeToBulb(iota.colorValue(colorData));
-      }
-      // Of just turn if off
-      else if(newData[index] === "off"){
-        return bulb.writeToBulb(iota.toggle(false));
-      }
     });
+
     Q.all(commandPromises).then((response)=>{
       logger.writeLog('All response done!', response);
       res.json(response);
@@ -94,10 +81,12 @@ var initiateApp = ()=>{
   webapp.listen(7000, ()=>{
     logger.writeLog('Webapp listening on 7000');
   });
-}
+};
 
+// Making sure things get properly terminated when the app is SIGTERM or SIGINTed
 var initiateEventHandlers = ()=>{
-  // Making sure things get properly terminated when disconnected
+  var deferred = Q.defer();
+  deferred.resolve(true);
   var killer = ()=> {
     _.forEach(bulbs, (bulb)=>{
       logger.writeLog('Terminating daemon for', bulb.stateInfo.macId);
@@ -108,17 +97,21 @@ var initiateEventHandlers = ()=>{
 
   process.on('SIGINT', killer);
   process.on('SIGTERM', killer);
+
+  return deferred.promise;
 }
 
 // Main entry point
 var init = ()=>{
-  initiateBulbs();
-  initiateEventHandlers();
-  initiateApp();
+  initiateBulbs()
+  .then(initiateEventHandlers);
+  .then(initiateApp);
 }
 
-// If it's the main, start-it up!
+// If it's the main, start-it up or can be used as a module!
 if(!module.parent){
   loadConfig();
-  // init();
+}
+else {
+  module.exports = BulbFactory;
 }

@@ -1,5 +1,5 @@
-iota Lite Deamon
-================
+RGB Bluetooth Bulb Controller
+=============================
 
 Enables you programmatically control the iota Lite (http://goiota.com/) without the official mobile application. This is a very incomplete placeholder project as on now. Best works with Raspberry Pi. (3 would be the best)
 
@@ -71,6 +71,7 @@ Also you can go to `/` for a webpage doing the same thing
 
 TODO:
  - Write a better color selector
- - Write better status feedback
- - Write a better kill script for the process
+ - Write a better kill script for the processes
  - Write bot code with web-hooks
+ - Write auto-scan for bulbs
+ - Write 
