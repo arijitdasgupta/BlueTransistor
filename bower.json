@@ -1,6 +1,6 @@
 {
-  "name": "iotalitejs",
-  "description": "A library to control iota Lite Bluetooth RGB LED bulb",
+  "name": "BlueTransistor",
+  "description": "A UI to control RGB Bluetooth LE bulbs running BlueTransistor",
   "main": "app.js",
   "authors": [
     "Arijit Dasgupta"

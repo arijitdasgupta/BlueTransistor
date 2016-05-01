@@ -1,13 +1,13 @@
 {
-  "name": "iotalitejs",
-  "version": "1.0.0",
-  "description": "A library to control iota Lite Bluetooth RGB LED bulb",
+  "name": "BlueTransistor",
+  "version": "1.1.0",
+  "description": "A library to control RGB Bluetooth LE bulbs",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Arijit Dasgupta",
-  "repository": "https://github.com/arijitdasgupta/iotaLiteJS",
+  "repository": "https://github.com/arijitdasgupta/BlueTransistor",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.0",
