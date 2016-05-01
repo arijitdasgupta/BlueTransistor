@@ -112,7 +112,7 @@ BlueTransistor.registerBulb({
 ```
 
 ###NOTES:
- - While running the app or when used as a library it will keep polling the Bluetooth bulb and maintain it's connection status. So other Bluetooth host can connect to the same bulbs as long as the object instances (or the application) is alive.
+ - While running the app or when used as a library it will keep polling the Bluetooth bulb and maintain it's connection status. So other Bluetooth host can't connect to the same bulbs as long as the object instances (or the application) are alive.
  - To properly kill the app kill the `node` process with a SIGINT. It will terminate all the child processes as well.
 
 ###TODO:
