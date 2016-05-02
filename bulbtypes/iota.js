@@ -1,10 +1,9 @@
 var _     = require('lodash');
+var helpers = require('../helpers.js');
 
-var gattWriteString = function(value){
-  return 'char-write-cmd 0x002b ' + value + '\n';
-};
+const controlCharacter = '0x002b';
 
-var calculateChecksum = function(hexString, salt){
+const calculateChecksum = function(hexString, salt){
   var byteArray = _.map(_.chunk(hexString, 2), (i)=>{
     return parseInt(i[0] + i[1], 16);
   });
@@ -14,24 +13,20 @@ var calculateChecksum = function(hexString, salt){
   return checksum;
 }
 
-var normalizeAlpha = function(alpha){
-  return (alpha > 200)?200:alpha;
+const gate = function(value, maxValue, minValue){
+  return (value > maxValue)?maxValue:((value < minValue)?minValue:value);
 }
 
-var calculateColorValue = function(color){
-  var red = _.padStart(color.red.toString(16), 2, '0');
-  var green = _.padStart(color.green.toString(16), 2, '0');
-  var blue = _.padStart(color.blue.toString(16), 2, '0');
-  var alpha = _.padStart(normalizeAlpha(color.alpha).toString(16), 2, '0');
+const calculateColorValue = function(color){
+  var red = _.padStart(helpers.gate(color.red,255,0).toString(16), 2, '0');
+  var green = _.padStart(helpers.gate(color.green,255,0).toString(16), 2, '0');
+  var blue = _.padStart(helpers.gate(color.blue,255,0).toString(16), 2, '0');
+  var alpha = _.padStart(helpers.gate(color.alpha,200,0).toString(16), 2, '0');
   var hexString = '0f0d0300' + red + green + blue + alpha + '000000000000';
   var checksum = calculateChecksum(hexString, 0xE5);
   // Get the main string
   // Calculate checksum
   return hexString + checksum + 'ffff\n';
-}
-
-var calculateToggleValue = function(red, green, blue, alpha){
-  return calculateValue;
 };
 
 // 0f0a0d00
@@ -45,7 +40,7 @@ var calculateToggleValue = function(red, green, blue, alpha){
 // +
 // ffff
 
-var calculateOnOff = function(on){
+const calculateOnOff = function(on){
   var hexString = '0f0a0d00';
   if(!on){
     hexString += '00000000050000';
@@ -66,8 +61,7 @@ var isOffCommand = function(rawCommand){
 };
 
 module.exports = {
-  isOffCommand: isOffCommand,
   colorValue: calculateColorValue,
   toggle: calculateOnOff,
-  gattWriteString: gattWriteString,
+  controlCharacter: controlCharacter
 };

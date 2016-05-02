@@ -26,6 +26,10 @@ const defaultColorValue = {
   "alpha": 255
 };
 
+const gattWriteString = function(character, value){
+  return 'char-write-cmd ' + character + ' ' + value + '\n';
+};
+
 const init = function(macId, bulbProtocol){
   // Status stuff
   var stateInfo = {
@@ -183,7 +187,7 @@ const init = function(macId, bulbProtocol){
   };
 
   var pushToBulb = (command)=>{
-    var writeString = bulbProtocol.gattWriteString(command);
+    var writeString = gattWriteString(bulbProtocol.controlCharacter, command);
     logger.writeLog('Writing...', writeString);
     gatttool.stdin.write(writeString);
   };
