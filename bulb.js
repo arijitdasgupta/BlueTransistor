@@ -188,7 +188,7 @@ const init = function(macId, bulbProtocol){
   };
 
   var pushToBulb = (command)=>{
-    var writeString = gattWriteString(bulbProtocol.controlCharacter, command);
+    var writeString = gattWriteString(bulbProtocol.controlHandle, command);
     logger.writeLog('Writing...', writeString);
     gatttool.stdin.write(writeString);
   };

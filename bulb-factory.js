@@ -12,6 +12,14 @@ var BulbFactory = {
       regex: /Lite/,
       // The protocol class implementation
       protocolClass: require('./bulbtypes/iota.js')
+    },
+    'yeelightblue2': {
+      // The name of the bulb that will be associated witht he config types
+      name: 'yeelightblue2',
+      // The bluetoothctl name that comes up match
+      regex: /Yeelight Blue II/,
+      // The protocol class implementation
+      protocolClass: require('./bulbtypes/yeelightblue2.js')
     }
   },
   bulbMacs: [],

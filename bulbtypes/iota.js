@@ -1,7 +1,7 @@
 var _     = require('lodash');
 var helpers = require('../helpers.js');
 
-const controlCharacter = '0x002b';
+const controlHandle = '0x002b';
 
 const calculateChecksum = function(hexString, salt){
   var byteArray = _.map(_.chunk(hexString, 2), (i)=>{
@@ -63,5 +63,5 @@ var isOffCommand = function(rawCommand){
 module.exports = {
   colorValue: calculateColorValue,
   toggle: calculateOnOff,
-  controlCharacter: controlCharacter
+  controlHandle: controlHandle
 };
