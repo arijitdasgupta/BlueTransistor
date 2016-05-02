@@ -69,8 +69,8 @@ The webapp runs on `PORT 7000`.
 }
 ```
 Post an array to `/bulbs` endpoint with each entry on that array corresponding to the `bulbs` array in `config.json`.
- - If one entry is the array is an object it will be treated as a color command for that bulb. This will also stop cycling between colors mode.
- - If one entry is an array of color objects the bulb will start cycling through the colors.
+ - If one entry in the array is a color object it will be treated as a color command for that bulb. 
+ - If one entry in the array is also an array of color objects the bulb will start cycling through the colors objects.
  - `stop` will stop cycling between colors.
  - `off` will turn the corresponding bulb off.
  - `unchanged` won't change anything on that bulb.
