@@ -16,6 +16,7 @@ const STATE_OFF = 'OFF';
 
 const RESPONSE_STOPPED = 'STOPPED';
 const RESPONSE_CHANGED = 'ACK';
+const RESPONSE_FAILED = 'FAILED';
 const RESPONSE_UNCHANGED = 'NO COMMAND';
 
 // Will me assigned over the incoming bulb data
@@ -36,7 +37,7 @@ const init = function(macId, bulbProtocol){
     macId: macId,
     online: false,
     lastCommand: undefined, //Initial flag, might not be a good idea. Bad design
-    mode: 'off',
+    mode: STATE_OFF,
     status: RESPONSE_CHANGED
   };
 
@@ -218,11 +219,11 @@ const init = function(macId, bulbProtocol){
      });
      commandTimer = setTimeout(()=>{
        clearCommandHandler();
-       deferred.resolve('failed');
+       deferred.resolve(_.assign(_.clone(stateInfo),{'status':RESPONSE_FAILED}));
      }, 10000);
     }
     else {
-      deferred.resolve('offline');
+      deferred.resolve(_.assign(_.clone(stateInfo),{'status':RESPONSE_FAILED}));
     }
   };
 
@@ -261,7 +262,7 @@ const init = function(macId, bulbProtocol){
       writeLastCommand(bulbData);
       stateInfo.mode = STATE_STATIC;
       resetAllCommandIntervals();
-      deferred.resolve(RESPONSE_STOPPED);
+      deferred.resolve(stateInfo);
     }
     else if(bulbData === 'off'){
       writeLastCommand(bulbData);
