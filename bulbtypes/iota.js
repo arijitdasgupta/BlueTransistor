@@ -63,5 +63,6 @@ var isOffCommand = function(rawCommand){
 module.exports = {
   colorValue: calculateColorValue,
   toggle: calculateOnOff,
-  controlHandle: controlHandle
+  controlHandle: controlHandle,
+  returnsNotification: true
 };

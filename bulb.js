@@ -212,15 +212,20 @@ const init = function(macId, bulbProtocol){
   var setCommandResolver = (deferred)=>{
     var commandTimer;
     if(stateInfo.online){
-     setCommandHandler(()=>{
-       clearTimeout(commandTimer);
-       clearCommandHandler();
-       deferred.resolve(stateInfo);
-     });
-     commandTimer = setTimeout(()=>{
-       clearCommandHandler();
-       deferred.resolve(_.assign(_.clone(stateInfo),{'status':RESPONSE_FAILED}));
-     }, 10000);
+      if(bulbProtocol.returnsNotification){
+        setCommandHandler(()=>{
+          clearTimeout(commandTimer);
+          clearCommandHandler();
+          deferred.resolve(stateInfo);
+        });
+        commandTimer = setTimeout(()=>{
+          clearCommandHandler();
+          deferred.resolve(_.assign(_.clone(stateInfo),{'status':RESPONSE_FAILED}));
+        }, 10000);
+      }
+      else {
+        deferred.resolve(_.assign(_.clone(stateInfo),{'status':RESPONSE_CHANGED}));
+      }
     }
     else {
       deferred.resolve(_.assign(_.clone(stateInfo),{'status':RESPONSE_FAILED}));
