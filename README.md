@@ -1,13 +1,19 @@
 BlueTransistor
 =============================
 
-Control your RGB Bluetooth LE bulbs from an webapp, or use as a node package. Currently iota Bulb (http://goiota.com/) is supported. More Bluetooth LE bulb support coming soon. Best works with Raspberry Pi (3 or with a Bluetooth dongle).
+Control your RGB Bluetooth LE bulbs from a web UI, or use as a node package. More Bluetooth LE bulb support coming soon.
+
+Bluetooth bulbs supported
+-------------------------
+ 1. iota Lite (http://goiota.com/)
+ 2. Yeelight Blue 2 (http://www.yeelight.co.uk/yeelight-blue-ii-bulb/). Has a fake `SUCCESS` response as of now.
+ 3. More bulb support coming soon...
 
 For protocol help on the iota Bulb, https://gist.github.com/arijitdasgupta/14f60d3189319ce707847a4f577291b8
 
 Requirements:
- - Raspberry Pi 3 / Raspberry Pi 2 with BT LE dongle / Bluetooth enabled computers with BlueZ stack support.
- - BlueZ Bluetooth Stack http://www.bluez.org/
+ - Raspberry Pi 3 / Raspberry Pi 2 with BT LE dongle / Bluetooth LE enabled computer with BlueZ stack support.
+ - BlueZ Bluetooth Stack http://www.bluez.org/ (Compile and install)
  - `node` preferably `>=5.2.0`, `npm` preferably `>=3.3.12` (Use https://github.com/creationix/nvm for easy nodeJS setup)
 
 ###To Start:
@@ -69,7 +75,7 @@ The webapp runs on `PORT 7000`.
 }
 ```
 Post an array to `/bulbs` endpoint with each entry on that array corresponding to the `bulbs` array in `config.json`.
- - If one entry in the array is a color object it will be treated as a color command for that bulb. 
+ - If one entry in the array is a color object it will be treated as a color command for that bulb.
  - If one entry in the array is also an array of color objects the bulb will start cycling through the colors objects.
  - `stop` will stop cycling between colors.
  - `off` will turn the corresponding bulb off.
@@ -117,7 +123,6 @@ BlueTransistor.registerBulb({
 
 ###TODO:
  - Write a better color selector in the UI.
- - Write a Yeelight Blue II (http://www.yeelight.co.uk/yeelight-blue-ii-bulb/) protocol class.
  - Write auto-scan for bulbs.
  - Write a kill script for the processes.
  - Write a doc site.
