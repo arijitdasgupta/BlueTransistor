@@ -1,7 +1,7 @@
 BlueTransistor
 =============================
 
-Control your RGB Bluetooth LE bulbs from a web UI, or use as a node package. More Bluetooth LE bulb support coming soon.
+Control your RGB Bluetooth LE bulbs from a web UI, or use as a node package.
 
 Bluetooth bulbs supported
 -------------------------
@@ -125,4 +125,4 @@ BlueTransistor.registerBulb({
  - Write a better color selector in the UI.
  - Write auto-scan for bulbs.
  - Write a kill script for the processes.
- - Write a doc site.
+ - Write a doc site for the library.
