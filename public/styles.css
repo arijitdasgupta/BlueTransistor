@@ -1,19 +1,25 @@
-.btn {
-  height: 80px;
-  width: 80px;
+body {
+  font-family: Helvetica;
 }
 
-.btn-round {
-  border-radius: 40px;
+.bulb-wrapper {
+  line-height: 0px;
+  margin-bottom: 10px;
 }
 
 .color {
   border: solid 1px black;
   display: inline-block;
-  margin: 5px;
+  margin: 0px;
   height: 80px;
   width: 80px;
-  border-radius: 40px;
+}
+
+.btn {
+  height: 80px;
+  width: 80px;
+  margin-top: 10px;
+  display: inline-block;
 }
 
 .main-wrapper {
