@@ -74,7 +74,7 @@
         red: color[0],
         green: color[1],
         blue: color[2],
-        alpha: 200
+        alpha: 255
       };
     }
 
