@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>iota Lite</title>
+    <title>BLE Lights Control Panel</title>
     <script src="/bower_components/lodash/dist/lodash.min.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/colorspace.js"></script>
@@ -12,9 +12,8 @@
   <body>
     <div class="main-wrapper" ng-app="application">
       <div ng-controller="MainController">
-        <h1>iota Lite Control Panel</h1>
         <button class = "control btn" ng-click="setAll=!setAll">{{setAll?"Change separately":"Change all together"}}</button>
-        <div ng-if="!setAll" ng-repeat="bulb in bulbs">
+        <div ng-if="!setAll" ng-repeat="bulb in bulbs" class="bulb-wrapper">
           <h2>Bulb {{$index + 1}}</h2>
 
           <div>
@@ -29,7 +28,7 @@
           <button class="control btn btn-round" ng-click="turnOff($index)">Turn off</button>
         </div>
 
-        <div ng-if="setAll">
+        <div ng-if="setAll" class="bulb-wrapper">
           <h2>All Bulbs</h2>
 
           <div>
