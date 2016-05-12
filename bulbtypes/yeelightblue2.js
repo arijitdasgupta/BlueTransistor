@@ -7,7 +7,7 @@ const calculateColorValue = function(color){
   var red = _.padStart(helpers.gate(color.red,255,0), 3, '0');
   var green = _.padStart(helpers.gate(color.green,255,0), 3, '0');
   var blue = _.padStart(helpers.gate(color.blue,255,0), 3, '0');
-  var alpha = _.padStart(helpers.gate(color.alpha,255,0), 3, '0');
+  var alpha = _.padStart(helpers.gate(color.alpha,100,0), 3, '0');
   var string = _.padEnd(red + ',' + green + ',' + blue + ',' + alpha, 18, ',');
   return (new Buffer(string)).toString('hex');
 };
