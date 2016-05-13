@@ -26,5 +26,6 @@ module.exports = {
   colorValue: calculateColorValue,
   toggle: calculateOnOff,
   controlHandle: controlHandle,
-  returnsNotification: false
+  returnsNotification: false,
+  changeDelay: 500
 };

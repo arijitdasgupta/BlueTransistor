@@ -216,20 +216,20 @@ const init = function(macId, bulbProtocol){
       clearInterval(colorRotateInterval);
       colorRotateInterval = null;
     }
+    var cColor = flowMode.newColor();
+    var dColor = flowMode.newColor();
     colorRotateInterval = setInterval(new function(){
-      var currentColor = flowMode.newColor();
-      var destinationColor = flowMode.newColor();
+      var currentColor = cColor;
+      var destinationColor = dColor;
       return function(){
-        if(_.equal(currentColor, destinationColor)){
-          currentColor = destinationColor;
+        logger.writeLog(currentColor, destinationColor);
+        if(_.isEqual(currentColor, destinationColor)){
           destinationColor = flowMode.newColor();
         }
-        else {
-          currentColor = flowMode.nextColor(currentColor, destinationColor, 10);
-        }
-        writeToBulb(bulbProtocol.colorValue(currentColor));
+        currentColor = flowMode.nextColor(currentColor, destinationColor, 10);
+        pushToBulb(bulbProtocol.colorValue(currentColor));
       }
-    }, 1500);
+    }, bulbProtocol.changeDelay || 500);
   }
 
   var setCommandResolver = (deferred)=>{

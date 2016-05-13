@@ -10,10 +10,10 @@ const nextColor = function(oldColor, newColor, increment){
     if(key !== 'alpha'){
       var val;
       if(value > newColor[key]){
-        val = helpers.gate(value - increment, 0, newColor[key]);
+        val = helpers.gate(value - increment, 255, newColor[key]);
       }
       else {
-        val = helpers.gate(value + increment, 0, newColor[key]);
+        val = helpers.gate(value + increment, newColor[key], 0);
       }
       midColor[key] = val;
     }
