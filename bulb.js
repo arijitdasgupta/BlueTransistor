@@ -154,7 +154,7 @@ const init = function(macId, bulbProtocol){
         logger.writeLog('Attempting to connect to', stateInfo.macId);
       }
       gatttool.stdin.write('connect\n');
-    }, 2000);
+    }, 3469);
   };
 
   var readLastCommand = ()=>{
