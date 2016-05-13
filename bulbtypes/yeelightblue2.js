@@ -27,5 +27,5 @@ module.exports = {
   toggle: calculateOnOff,
   controlHandle: controlHandle,
   returnsNotification: false,
-  changeDelay: 500
+  changeDelay: 300
 };
