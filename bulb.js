@@ -4,6 +4,7 @@ var fs =     require('fs');
 var Q =      require('q');
 
 var logger = require('./logger.js');
+var flowMode = require('./flowmode.js');
 
 const connectSuccess = 'Connection successful';
 const acknowledgement = 'Notification handle';
@@ -13,6 +14,7 @@ const failure = 'Command Failed';
 const STATE_STATIC = 'STATIC';
 const STATE_ROTATING = 'ROTATING';
 const STATE_OFF = 'OFF';
+const STATE_FLOW = 'FLOW';
 
 const RESPONSE_STOPPED = 'STOPPED';
 const RESPONSE_CHANGED = 'ACK';
@@ -209,6 +211,27 @@ const init = function(macId, bulbProtocol){
     }, 1500);
   };
 
+  var flowCommands = ()=>{
+    if(colorRotateInterval){
+      clearInterval(colorRotateInterval);
+      colorRotateInterval = null;
+    }
+    colorRotateInterval = setInterval(new function(){
+      var currentColor = flowMode.newColor();
+      var destinationColor = flowMode.newColor();
+      return function(){
+        if(_.equal(currentColor, destinationColor)){
+          currentColor = destinationColor;
+          destinationColor = flowMode.newColor();
+        }
+        else {
+          currentColor = flowMode.nextColor(currentColor, destinationColor, 10);
+        }
+        writeToBulb(bulbProtocol.colorValue(currentColor));
+      }
+    }, 1500);
+  }
+
   var setCommandResolver = (deferred)=>{
     var commandTimer;
     if(stateInfo.online){
@@ -252,7 +275,6 @@ const init = function(macId, bulbProtocol){
       });
       rotateCommandsRandomly(_.map(reformedBulbData, bulbProtocol.colorValue));
       deferred.resolve(stateInfo);
-      return deferred.promise;
     }
     else if(!_.isString(bulbData) && _.isObject(bulbData)){
       writeLastCommand(bulbData);
@@ -261,6 +283,13 @@ const init = function(macId, bulbProtocol){
       var rawCommand = bulbProtocol.colorValue(_.assign(_.clone(defaultColorValue), bulbData));
       pushToBulb(rawCommand);
       setCommandResolver(deferred);
+    }
+    else if(bulbData === 'flow'){
+      writeLastCommand(bulbData);
+      stateInfo.mode = STATE_FLOW;
+      logger.writeLog('Starting to flow colors on', stateInfo.macId);
+      flowCommands();
+      deferred.resolve(stateInfo);
     }
     // Stop rotation
     else if(bulbData === 'stop'){
