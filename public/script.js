@@ -96,6 +96,12 @@
       }));
     };
 
+    $scope.setRandom = function(bulbindex){
+      BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
+        return (index === bulbindex)?'random':'unchanged';
+      }));
+    };
+
     $scope.setFlow = function(bulbindex){
       BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
         return (index === bulbindex)?'flow':'unchanged';
@@ -141,6 +147,12 @@
     $scope.setFlowAll = function(){
       BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
         return 'flow';
+      }));
+    };
+
+    $scope.setRandomAll = function(){
+      BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
+        return 'random';
       }));
     };
 

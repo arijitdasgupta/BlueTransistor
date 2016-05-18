@@ -284,6 +284,13 @@ const init = function(macId, bulbProtocol){
       pushToBulb(rawCommand);
       setCommandResolver(deferred);
     }
+    else if(bulbData === 'random'){
+      writeLastCommand(bulbData);
+      resetAllCommandIntervals();
+      var rawCommand = bulbProtocol.colorValue(_.assign(_.clone(defaultColorValue), flowMode.newColor()));
+      pushToBulb(rawCommand);
+      setCommandResolver(deferred);
+    }
     else if(bulbData === 'flow'){
       writeLastCommand(bulbData);
       stateInfo.mode = STATE_FLOW;
