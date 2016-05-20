@@ -108,6 +108,12 @@
       }));
     };
 
+    $scope.setDisco = function(bulbindex){
+      BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
+        return (index === bulbindex)?'disco':'unchanged';
+      }));
+    };
+
     $scope.toggleChanger = function(bulbindex){
       if(!timerIntervals[bulbindex]){
         timerIntervals[bulbindex] = setInterval(function(){
@@ -147,6 +153,12 @@
     $scope.setFlowAll = function(){
       BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
         return 'flow';
+      }));
+    };
+
+    $scope.setDiscoAll = function(){
+      BulbsService.setBulbs(_.map($scope.bulbs, function(item, index){
+        return 'disco';
       }));
     };
 

@@ -15,6 +15,7 @@ const STATE_STATIC = 'STATIC';
 const STATE_ROTATING = 'ROTATING';
 const STATE_OFF = 'OFF';
 const STATE_FLOW = 'FLOW';
+const STATE_DISCO = 'DISCO';
 
 const RESPONSE_STOPPED = 'STOPPED';
 const RESPONSE_CHANGED = 'ACK';
@@ -222,13 +223,23 @@ const init = function(macId, bulbProtocol){
       var currentColor = cColor;
       var destinationColor = dColor;
       return function(){
-        logger.writeLog(currentColor, destinationColor);
         if(_.isEqual(currentColor, destinationColor)){
           destinationColor = flowMode.newColor();
         }
         currentColor = flowMode.nextColor(currentColor, destinationColor, 10);
         pushToBulb(bulbProtocol.colorValue(currentColor));
       }
+    }, bulbProtocol.changeDelay || 500);
+  }
+
+  var discoCommands = ()=>{
+    if(colorRotateInterval){
+      clearInterval(colorRotateInterval);
+      colorRotateInterval = null;
+    }
+    colorRotateInterval = setInterval(function(){
+      var newColor = _.assign(_.clone(defaultColorValue), flowMode.newColor());
+      pushToBulb(bulbProtocol.colorValue(newColor));
     }, bulbProtocol.changeDelay || 500);
   }
 
@@ -278,8 +289,8 @@ const init = function(macId, bulbProtocol){
     }
     else if(!_.isString(bulbData) && _.isObject(bulbData)){
       writeLastCommand(bulbData);
-      stateInfo.mode = STATE_STATIC;
       resetAllCommandIntervals();
+      stateInfo.mode = STATE_STATIC;
       var rawCommand = bulbProtocol.colorValue(_.assign(_.clone(defaultColorValue), bulbData));
       pushToBulb(rawCommand);
       setCommandResolver(deferred);
@@ -287,6 +298,7 @@ const init = function(macId, bulbProtocol){
     else if(bulbData === 'random'){
       writeLastCommand(bulbData);
       resetAllCommandIntervals();
+      stateInfo.mode = STATE_STATIC;
       var rawCommand = bulbProtocol.colorValue(_.assign(_.clone(defaultColorValue), flowMode.newColor()));
       pushToBulb(rawCommand);
       setCommandResolver(deferred);
@@ -298,11 +310,18 @@ const init = function(macId, bulbProtocol){
       flowCommands();
       deferred.resolve(stateInfo);
     }
-    // Stop rotation
+    else if(bulbData === 'disco'){
+      writeLastCommand(bulbData);
+      stateInfo.mode = STATE_DISCO;
+      logger.writeLog('Starting to disco colors on', stateInfo.macId);
+      discoCommands();
+      deferred.resolve(stateInfo);
+    }
+    // Stop whatever
     else if(bulbData === 'stop'){
       writeLastCommand(bulbData);
-      stateInfo.mode = STATE_STATIC;
       resetAllCommandIntervals();
+      stateInfo.mode = STATE_STATIC;
       deferred.resolve(stateInfo);
     }
     else if(bulbData === 'off'){
