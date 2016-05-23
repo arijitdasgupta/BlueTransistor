@@ -80,8 +80,9 @@ Post an array to `/bulbs` endpoint with each entry on that array corresponding t
  - If one entry in the array is also an array of color objects the bulb will start cycling through the colors objects.
  - `stop` will stop any running color changes.
  - `flow` will make the corresponding bulb smoothly change to random colors.
+ - `disco` will make the bulb go crazy at an interval speficied for that bulb make.
  - `off` will turn the corresponding bulb off.
- - `unchanged` won't change anything on that bulb.
+ - `unchanged` or any other string won't change anything on that bulb.
 
 ###GET
 `GET` to `/bulbs` will get you the status of the bulbs currently online...
@@ -121,7 +122,8 @@ BlueTransistor.registerBulb({
 
 ###NOTES:
  - While running the app or when used as a library it will keep polling the Bluetooth bulb and maintain it's connection status. So other Bluetooth host can't connect to the same bulbs as long as the object instances (or the application) are alive.
- - To properly kill the app kill the `node` process with a SIGINT. It will terminate all the child processes as well.
+ - When using as a library, at initiation of the module, the last applied command will be dispatched. Also if the bulb goes offline for some reason and comes back online it will dispatch the last command that it stores in the filesystem.
+ - To properly kill the app kill the `node` process with a SIGINT. It will terminate all the child processes as well (e.g. GATTtool).
 
 ###TODO:
  - Write a better color selector in the UI.
